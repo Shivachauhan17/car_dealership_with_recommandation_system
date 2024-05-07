@@ -33,6 +33,6 @@ carSchema.set('toJSON',{
 })
 
 
-const Car=mongoose('Car',carSchema)
+const Car=mongoose.model('Car',carSchema)
 
 module.exports=Car
