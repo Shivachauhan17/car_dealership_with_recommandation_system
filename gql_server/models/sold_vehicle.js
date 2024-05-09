@@ -21,6 +21,6 @@ soldVehicleSchema.set('toJSON',{
         delete returnedObject.__v
     }})
 
-const SoldVehicle=mongoose('SoldVehicle',soldVehicleSchema)
+const SoldVehicle=mongoose.model('SoldVehicle',soldVehicleSchema)
 
 module.exports=SoldVehicle

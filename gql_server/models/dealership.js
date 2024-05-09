@@ -1,4 +1,4 @@
-import mongoose, { pluralize } from "mongoose";
+const mongoose=require('mongoose')
 mongoose.pluralize(false)
 
 const dealerSchema=mongoose.Schema({
@@ -6,10 +6,7 @@ const dealerSchema=mongoose.Schema({
     required:true,
     type:String
   },
-  dealership_id:{
-    required:true,
-    type:String
-  },
+  
   dealership_name:{
     required:true,
     type:String
@@ -29,7 +26,7 @@ const dealerSchema=mongoose.Schema({
   cars:[
     {
         type:mongoose.Schema.Types.ObjectId,
-        ref:'car'
+        ref:'Car'
     }
   ],
   deals:[{
