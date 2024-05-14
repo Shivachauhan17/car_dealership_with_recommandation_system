@@ -5,10 +5,11 @@ const {startStandaloneServer}=require('@apollo/server/standalone')
 const path=require('path')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
+const {JWT_SECRET}=require('./config/config')
 
 const connectMongo=require('./utils/connect_db')
 const { Query } = require('mongoose')
-connectMongo()
+// connectMongo()
 
 
 const Car=require('./models/car')
@@ -19,7 +20,7 @@ const Deal=require('./models/deal')
 
 const { register } = require('module')
 
-const typedefs=`
+const typeDefs=`
 
     type CarInfo{
         price:Int!
@@ -103,7 +104,7 @@ const typedefs=`
         register(name:String!,email:String!,phoneNumber:String!,password:String!,selectedRole:String!,location:String!,dealerInfo:String!,userInfo:String!):String!
         dealCompleted(dealershipEmail:String!,carID:String!,userEmail:String!,dealID:String!,vehicle_info:String!):String!
         addCarToDealership(carID:String!,dealershipEmail:String!):String!
-        addDealToDealership(dealID:String!,dealershipEmail:String!,dealInfo:DealInfo!):String!
+        addDealToDealership(dealID:String!,dealershipEmail:String!,discount:Int!,description:String!):String!
 
     }
 
@@ -301,7 +302,7 @@ const resolvers={
                         type:"dealership",
                         id: dealership.id,
                     } 
-                    const token=await jwt.sign(userForToken,jwtSecret)
+                    const token=await jwt.sign(userForToken,JWT_SECRET)
                     return  {msg:"dealership successfully verified logging you in",token:token,error:null}
         
                 }
@@ -400,14 +401,17 @@ const resolvers={
 
 
         addDealToDealership:async(root,args)=>{
-            const {dealershipEmail,deal_info,carID}=args
-            if(!dealershipEmail || !deal_info || !carID){
+            const {dealershipEmail,discount,description,carID}=args
+            if(!dealershipEmail || !discount || !carID || !description){
                 throw new GraphQlError("input parameter does not sent correctly")
             }
             try{
                 const newDeal= new Deal({
                     car_id:new mongoose.Types.ObjectId(carID),
-                    deal_info:deal_info
+                    deal_info:{
+                        discount:discount,
+                        description:description
+                    }
                 })
     
                 const savedDeal=await newDeal.save()
@@ -434,4 +438,9 @@ const resolvers={
 
 
     }
+}
+
+module.exports={
+    resolvers,
+    typeDefs
 }
