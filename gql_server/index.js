@@ -44,7 +44,7 @@ const typeDefs=`
 
     type SoldVehicle{
         id:ID!
-        car_id:Car!
+        car_id:Car
         vehicle_info:SoldVehicleInfo!
     }
 
@@ -89,8 +89,8 @@ const typeDefs=`
         dealershipWithCertainCar(carID:String!):[Dealership]!
 
         vehicleOwnedByUser(userEmail:String!):[SoldVehicle]!
-        viewAllDealsOnCertainCar:[Deal]!
-        viewDealershipVehiclesSold:[SoldVehicle]!
+        viewAllDealsOnCertainCar(carID:String!):[Deal]!
+        viewDealershipVehiclesSold(dealershipEmail:String!):[SoldVehicle]!
     }
 
     type LoginResponse{
@@ -203,7 +203,7 @@ const resolvers={
             return deals
         },
         viewDealershipVehiclesSold:async(root,args)=>{
-            const {dealershipEmail}=req.query
+            const {dealershipEmail}=args
             if(!dealershipEmail){
                 throw new GraphQlError("input parameters are not given correctly")
             }
@@ -217,7 +217,7 @@ const resolvers={
                     path:'car_id'
                 }
             })
-            return dealership.sold_vehicle
+            return dealership.sold_vehicles
         }
 
     },
