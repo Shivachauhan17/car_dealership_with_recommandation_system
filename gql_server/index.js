@@ -1,6 +1,6 @@
 const {ApolloServer}=require('@apollo/server')
 const mongoose=require('mongoose')
-const {GraphQlError}=require('graphql')
+const {GraphQLError}=require('graphql')
 const {startStandaloneServer}=require('@apollo/server/standalone')
 const path=require('path')
 const bcrypt=require('bcrypt')
@@ -102,9 +102,9 @@ const typeDefs=`
     type Mutation{
         login(email:String!,password:String!,selectedRole:String!):LoginResponse!
         register(name:String!,email:String!,phoneNumber:String!,password:String!,selectedRole:String!,location:String!,dealerInfo:String!,userInfo:String!):String!
-        dealCompleted(dealershipEmail:String!,carID:String!,userEmail:String!,dealID:String!,vehicle_info:String!):String!
+        dealCompleted(dealershipEmail:String!,carID:String!,userEmail:String!,dealID:String!,sold_price:Int!,sold_date:String!,description:String!):String!
         addCarToDealership(carID:String!,dealershipEmail:String!):String!
-        addDealToDealership(dealID:String!,dealershipEmail:String!,discount:Int!,description:String!):String!
+        addDealToDealership(carID:String!,dealershipEmail:String!,discount:Int!,description:String!):String!
 
     }
 
@@ -121,7 +121,7 @@ const resolvers={
             }
             catch(e){
                 console.log(e)
-                throw new GraphQlError("failed to fetch car data")
+                throw new GraphQLError("failed to fetch car data")
             }
             
         },
@@ -129,7 +129,7 @@ const resolvers={
         carsOfCertainDealership:async(root,args)=>{
             const {dealershipEmail}=args
             if(!dealershipEmail){
-                throw new GraphQlError("inpur parameters are not right")
+                throw new GraphQLError("inpur parameters are not right")
             }
 
             const dealership=await Dealership.findOne({dealership_email:dealershipEmail}).populate('cars')
@@ -139,7 +139,7 @@ const resolvers={
         dealsOfCertainDealership:async(root,args)=>{
             const {dealershipEmail}=args
             if(!dealershipEmail){
-                throw new GraphQlError("inpur parameters are not right")
+                throw new GraphQLError("inpur parameters are not right")
             }
 
             const dealership=await Dealership.findOne({dealership_email:dealershipEmail}).populate(
@@ -156,7 +156,7 @@ const resolvers={
         dealershipWithCertainCar:async(root,args)=>{
             const {carID}=args
             if(!carID){
-                throw new GraphQlError("inpur parameters are not right")
+                throw new GraphQLError("inpur parameters are not right")
             }
 
             const dealerships=await Dealership.find(
@@ -175,7 +175,7 @@ const resolvers={
         vehicleOwnedByUser:async(root,args)=>{
             const {userEmail}=args
             if(!userEmail){
-                throw new GraphQlError("inpur parameters are not right")
+                throw new GraphQLError("inpur parameters are not right")
             }
 
             const user=await User.findOne(
@@ -195,7 +195,7 @@ const resolvers={
         viewAllDealsOnCertainCar:async(root,args)=>{
             const {carID}=args
             if(!carID){
-                throw new GraphQlError("input parameters are not given correctly")
+                throw new GraphQLError("input parameters are not given correctly")
             }
 
             const deals=await Deal.find({car_id:new mongoose.Types.ObjectId(carID)}).populate('car_id')
@@ -205,7 +205,7 @@ const resolvers={
         viewDealershipVehiclesSold:async(root,args)=>{
             const {dealershipEmail}=args
             if(!dealershipEmail){
-                throw new GraphQlError("input parameters are not given correctly")
+                throw new GraphQLError("input parameters are not given correctly")
             }
 
             const dealership=await Dealership.findOne({
@@ -226,14 +226,14 @@ const resolvers={
         register:async (root,args)=>{
             const {name,email,phoneNumber,password,selectedRole,location,dealerInfo,userInfo}=args
             if(!location || !name || !email || !phoneNumber || !password || !selectedRole){
-                throw new GraphQlError("inpur parameters are not right")
+                throw new GraphQLError("inpur parameters are not right")
             }
 
             try{
                 if(selectedRole==="dealership"){
                     console.log("as a dealer")
                     if( !dealerInfo){
-                        throw new GraphQlError("inpur parameters are not right")
+                        throw new GraphQLError("inpur parameters are not right")
                     }
                     const existingUser = await Dealership.findOne({ dealership_email:email });
                     if (existingUser) {
@@ -253,7 +253,7 @@ const resolvers={
                 }
                 else {
                     if( !userInfo){
-                        throw new GraphQlError("input parameters are not correctl ")
+                        throw new GraphQLError("input parameters are not correctl ")
                     }
                     const existingUser = await User.findOne({ user_email:email });
                     if (existingUser) {
@@ -276,7 +276,7 @@ const resolvers={
             }
             catch(e){
                 console.log(e)
-                throw new GraphQlError("error in registering the user")
+                throw new GraphQLError("error in registering the user")
 
             }
         },
@@ -285,7 +285,7 @@ const resolvers={
             const { email,password,selectedRole } = args
 
             if(!email ||  !password || !selectedRole){
-                throw new GraphQlError("input parameters are not correctl ")
+                throw new GraphQLError("input parameters are not correctl ")
             }
 
             try{
@@ -326,24 +326,29 @@ const resolvers={
             }
             catch(e){
                 console.log(e)
-                throw new GraphQlError("error in sign-in")
+                throw new GraphQLError("error in sign-in")
             }
 
         },
         dealCompleted:async(root,args)=>{
-            const {dealershipEmail,carID,dealID,vehicle_info,userEmail}=args
+            const {dealershipEmail,carID,dealID,sold_price,sold_date,description,userEmail}=args
 
-            if(!dealershipEmail ||  !carID || !dealID || !vehicle_info || !userEmail){
-                throw new GraphQlError("input parameters are not correctl ")
+            if(!dealershipEmail ||  !carID || !dealID || !sold_price || !userEmail || !sold_date || !description){
+                throw new GraphQLError("input parameters are not correctl ")
             }
 
             try{
+                const vehicle_info={
+                    sold_price:sold_price,
+                    sold_date:sold_date,
+                    description:description
+                }
                 const sold_vehicle=new SoldVehicle({
                     car_id:new mongoose.Types.ObjectId(carID),
                     vehicle_info:vehicle_info
                 })
 
-                await sold_vehicle.save()
+                const sold_vehicle_doc=await sold_vehicle.save()
 
                 await User.findOneAndUpdate({
                     user_email:userEmail
@@ -372,7 +377,7 @@ const resolvers={
             }
             catch(e){
                 console.log(e)
-                throw new GraphQlError("error in fetching all cars data")
+                throw new GraphQLError("error in fetching all cars data")
             }
         },
 
@@ -380,7 +385,7 @@ const resolvers={
             const {carID,dealershipEmail}=args
 
             if(!carID || !dealershipEmail){
-                throw new GraphQlError("input parameter does not sent correctly")
+                throw new GraphQLError("input parameter does not sent correctly")
             }
 
             try{
@@ -394,7 +399,7 @@ const resolvers={
             }
             catch(e){
                 console.log(e)
-                throw new GraphQlError("error adding new acr to inventory")
+                throw new GraphQLError("error adding new acr to inventory")
             }
 
         },
@@ -403,7 +408,7 @@ const resolvers={
         addDealToDealership:async(root,args)=>{
             const {dealershipEmail,discount,description,carID}=args
             if(!dealershipEmail || !discount || !carID || !description){
-                throw new GraphQlError("input parameter does not sent correctly")
+                throw new GraphQLError("input parameter does not sent correctly")
             }
             try{
                 const newDeal= new Deal({
@@ -432,7 +437,7 @@ const resolvers={
             }
             catch(e){
                 console.log(e)
-                throw new GraphQlError("failed to add the deal")
+                throw new GraphQLError("failed to add the deal")
             }
         },
 

@@ -171,6 +171,8 @@ describe("testing all queries",()=>{
         const DEALERSHIP_VEHICLE_SOLD=gql`
             query ViewDealershipVehiclesSold($dealershipEmail:String!){
                 viewDealershipVehiclesSold(dealershipEmail:$dealershipEmail){
+                    id
+
                     vehicle_info{
                         sold_price
                         sold_date
@@ -189,4 +191,72 @@ describe("testing all queries",()=>{
         expect(result.data.viewDealershipVehiclesSold[0].vehicle_info.sold_price).toEqual(expectedValue)
     })
 
+})
+
+
+describe("testing all dealership mutations",()=>{
+    test("deal completed",async()=>{
+        const DEAL_COMPLETED=gql`
+            mutation DealCompleted($dealershipEmail:String!,$carID:String!,$dealID:String!,$userEmail:String!,$sold_price:Int!,$sold_date:String!,$description:String!){
+                dealCompleted(dealershipEmail:$dealershipEmail,carID:$carID,dealID:$dealID,userEmail:$userEmail,sold_price:$sold_price,sold_date:$sold_date,description:$description)
+            }
+        `
+
+        const expectedValue="deal has been completed successfully"
+        
+        const variables={
+            dealershipEmail:"shivanbd2019@gmail.com",
+            carID:"6643a1e7f81da95cb3a5ff38",
+            dealID:"664610ab1bb418cffd51ac63",
+            sold_price:300000,
+            userEmail:"test@gmail.com",
+            sold_date:"1july",
+            description:"it been a grea experience deling with you"
+        }
+        
+        const result=await mutate({mutation:DEAL_COMPLETED,variables})
+        console.log(result)
+        expect(result.data.dealCompleted).toEqual(expectedValue)
+    })
+
+
+    test("add car to dealership",async()=>{
+        const ADD_CAR_TO_DEALERSHIP=gql`
+            mutation AddCarToDealership($carID:String!,$dealershipEmail:String!){
+                addCarToDealership(carID:$carID,dealershipEmail:$dealershipEmail)
+            }
+        `
+
+        const expectedValue="successfully added to dealership"
+
+        const variables={
+            carID:"6643a1e7f81da95cb3a5ff38",
+            dealershipEmail:"shivanbd2019@gmail.com"
+        }
+
+        const result=await mutate({mutation:ADD_CAR_TO_DEALERSHIP,variables})
+        console.log(result)
+        expect(result.data.addCarToDealership).toEqual(expectedValue)
+    })
+
+
+    test("add deal to dealership",async()=>{
+        const ADD_DEAL_TO_DEALERSHIP=gql`
+            mutation AddDealToDealership($dealershipEmail:String!,$discount:Int!,$description:String!,$carID:String!){
+                addDealToDealership(dealershipEmail:$dealershipEmail,discount:$discount,description:$description,carID:$carID)
+            }
+        `
+        const expectedValue="deal added successfully"
+
+        const variables={
+            dealershipEmail:"shivanbd2019@gmail.com",
+            discount:20000,
+            description:"all man should serve",
+            carID:"6643a1e7f81da95cb3a5ff38"
+        }
+
+        const result=await mutate({mutation:ADD_DEAL_TO_DEALERSHIP,variables})
+        console.log(result)
+        expect(result.data.addDealToDealership).toEqual(expectedValue)
+    })
 })
