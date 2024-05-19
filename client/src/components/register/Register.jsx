@@ -1,53 +1,169 @@
 // src/FormComponent.js
-import React, { useState,memo } from 'react';
+import React, { useState,memo,useEffect } from 'react';
+import {useSelector,useDispatch} from 'react-redux'
+
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    name: '',
+  const dispatch=useDispatch()
+
+  const [emailValidation,setEmailValidation]=useState(false)
+  const [passwordValidation,setPasswordValidation]=useState(false)
+  const [roleValidation,setRoleValidation]=useState(false)
+  const [phoneValidation,setPhoneValidation]=useState(false)
+  const [locationValidation,setLocationValidation]=useState(false)
+  const [dealerInfoValidation,setDealerInfoValidation]=useState(false)
+  const [userInfoValidation,setUserInfoValidation]=useState(false)
+
+  const name=useSelector(state=>state.form.name)
+  const regEmail=useSelector(state=>state.form.regEmail)
+  const phoneNumber=useSelector(state=>state.form.phoneNumber)
+  const regPassword=useSelector(state=>state.form.regPassword)
+  const regRole=useSelector(state=>state.form.regRole)
+  const location=useSelector(state=>state.form.location)
+  const dealerInfo=useSelector(state=>state.form.dealerInfo)
+  const userInfo=useSelector(state=>state.form.userInfo)
+
+  const [error, setError] = useState({
+    name:"",
     email: '',
-    phoneNumber: '',
+    phoneNumber:"",
     password: '',
     selectedRole: 'user',
-    location: '',
-    dealerInfo: '',
-    userInfo: '',
+    location:"",
+    dealerInfo:"",
+    userInfo:""
   });
 
-  const [errors, setErrors] = useState({});
-
-  const validate = () => {
-    const errors = {};
-    if (!formData.name) errors.name = 'Name is required';
-    if (!formData.email) errors.email = 'Email is required';
-    if (!formData.phoneNumber.match(/^\d{10}$/)) errors.phoneNumber = 'Phone number must be exactly 10 digits';
-    if (!formData.password) errors.password = 'Password is required';
-    if (!formData.location) errors.location = 'Location is required';
-    return errors;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      // Handle form submission (e.g., send data to server)
-      console.log('Form data:', formData);
+  const validateEmail = () => {
+    if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(regEmail)){
+      console.log("matched")
+      setEmailValidation(true)
+      
     }
-  };
+    else{
+      setEmailValidation(false)
+      setError({
+        ...error,
+        email:"format of the email input is not correct"
+      })
+    }}
+
+  const validatePassword=()=>{
+    if(/[@#$%^&*()]/.test(regPassword)){
+      setPasswordValidation(true)
+      
+    }
+    else{
+      setPasswordValidation(false)
+      setError({
+        ...error,
+        password:"password should contain a special character from @, #, $, %, ^, &, *"
+      })
+    }}
+
+    const validateRole=()=>{
+
+    if(regRole!=="admin" || regRole!=="user"){
+      setRoleValidation(true)
+      
+    }
+    else{
+      setRoleValidation(false)
+      setError({
+        ...error,
+        selectedRole:"choose a role"
+      })
+    }
+
+  }
+
+  const validatePhoneNumber=()=>{
+    if((phoneNumber.length>10 || phoneNumber.length<10) && /^[0-9]+$/.test(phoneNumber)){
+      setPhoneValidation(true)
+    }
+    else{
+      setPhoneValidation(false)
+      setError({
+        ...error,
+        phoneNumber:"phone Number should be total 10 digits"
+      })
+    }
+  }
+
+  const validateLocation=()=>{
+    if(location.length!==0){
+      setLocationValidation(true)
+    }
+    else{
+      setLocationValidation(false)
+      setError({
+        ...error,
+        location:"also provide your location"
+      })
+    }
+  }
+
+  const validateDealerInfo=()=>{
+    const words=dealerInfo.split(/\s+/).length
+    if(words>50){
+      setDealerInfoValidation(true)
+    }
+    else{
+      setDealerInfoValidation(false)
+      setError({
+        ...error,
+        dealerInfo:"use atleast 50 words about yourself"
+      })
+    }
+  }
+
+  const validateUserInfo=()=>{
+    const words=userInfo.split(/\s+/).length
+    if(words>50){
+      setUserInfoValidation(true)
+    }
+    else{
+      setUserInfoValidation(false)
+      setError({
+        ...error,
+        userInfo:"use atleast 50 words about yourself"
+      })
+    }
+  }
+
+
+  useEffect(()=>{
+    validateEmail()
+  },[regEmail])
+
+  useEffect(()=>{
+    validatePhoneNumber()
+  },[phoneNumber])
+
+  useEffect(()=>{
+    validatePassword()
+  },[regPassword])
+
+  useEffect(()=>{
+    validateRole()
+  },[regRole])
+
+  useEffect(()=>{
+    validateLocation()
+  },[location])
+
+  useEffect(()=>{
+    validateDealerInfo()
+  },[dealerInfo])
+
+  useEffect(()=>{
+    validateUserInfo()
+  },[userInfo])
 
   return (
     <div className='mt-10 max-w-md mx-auto'>
       <h2 className='text-3xl text-orange-500 font-bold font-sans'>Register!</h2>
-      <form onSubmit={handleSubmit}   className="bg-white text-orange-500 mt-2 space-y-4 max-w-md mx-auto p-4 border border-gray-300 rounded">
+      <form    className="bg-white text-orange-500 mt-2 space-y-4 max-w-md mx-auto p-4 border border-gray-300 rounded">
         <div>
           <label className="block">Name:</label>
           <input
