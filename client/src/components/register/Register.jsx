@@ -1,10 +1,51 @@
 // src/FormComponent.js
 import React, { useState,memo,useEffect } from 'react';
 import {useSelector,useDispatch} from 'react-redux'
+import { useNavigate } from 'react-router-dom';
+import {setName,
+  setRegEmail,
+  setPhoneNumber,
+  setRegPassword,
+  setRegRole,
+  setLocation,
+  setDealerInfo,
+  setUserInfo} from '../../store/authForms/loginRegisterReducer'
+import {gql, useMutation} from '@apollo/client'
+import Swal from 'sweetalert2';
+
+
+const CREATE_ACCOUNT=gql`
+  mutation createPerson($name:String!,$email:String!,$phoneNumber:String!,$password:String!,$selectedRole:String!,$location:String!,$dealerInfo:String!,$userInfo:String!){
+    register(name:$name,email:$email,phoneNumber:$phoneNumber,password:$password,selectedRole:$selectedRole,location:$location,dealerInfo:$dealerInfo,userInfo:$userInfo)
+  }
+`
 
 
 const Register = () => {
+  const navigate=useNavigate()
   const dispatch=useDispatch()
+  const [createPerson]=useMutation(CREATE_ACCOUNT,{
+    onError:(error)=>{
+      const messages=error.graphQLErrors.map(e=>e.message).join('\n')
+      setErrors(messages)
+      Swal.fire({
+        icon:'error',
+        title:'Oops..',
+        text:errors
+      })
+    },
+    onCompleted:(data)=>{
+      Swal.fire({
+        icon:'success',
+        title:'Success!',
+        text:data.register
+      })
+      setTimeout(()=>{
+        navigate('/login')
+      },1500)
+      
+    }
+  })
 
   const [emailValidation,setEmailValidation]=useState(false)
   const [passwordValidation,setPasswordValidation]=useState(false)
@@ -13,6 +54,7 @@ const Register = () => {
   const [locationValidation,setLocationValidation]=useState(false)
   const [dealerInfoValidation,setDealerInfoValidation]=useState(false)
   const [userInfoValidation,setUserInfoValidation]=useState(false)
+  const [errors,setErrors]=useState(null)
 
   const name=useSelector(state=>state.form.name)
   const regEmail=useSelector(state=>state.form.regEmail)
@@ -36,7 +78,7 @@ const Register = () => {
 
   const validateEmail = () => {
     if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(regEmail)){
-      console.log("matched")
+      
       setEmailValidation(true)
       
     }
@@ -63,7 +105,7 @@ const Register = () => {
 
     const validateRole=()=>{
 
-    if(regRole!=="admin" || regRole!=="user"){
+    if(regRole!=="dealership" || regRole!=="user"){
       setRoleValidation(true)
       
     }
@@ -78,7 +120,7 @@ const Register = () => {
   }
 
   const validatePhoneNumber=()=>{
-    if((phoneNumber.length>10 || phoneNumber.length<10) && /^[0-9]+$/.test(phoneNumber)){
+    if(phoneNumber?.length===10 && /^[0-9]+$/.test(phoneNumber)){
       setPhoneValidation(true)
     }
     else{
@@ -160,20 +202,37 @@ const Register = () => {
     validateUserInfo()
   },[userInfo])
 
+  const handleSubmit=(e)=>{
+    e.preventDefault()
+
+    const variables={
+      name:name,
+      email:regEmail,
+      phoneNumber:phoneNumber,
+      password:regPassword,
+      selectedRole:regRole,
+      location:location,
+      dealerInfo:dealerInfo,
+      userInfo:userInfo
+    }
+
+    createPerson({variables:variables})
+
+  }
+
   return (
-    <div className='mt-10 max-w-md mx-auto'>
+    <div className=' mt-10 max-w-[400px] lg:max-w-md mx-auto'>
       <h2 className='text-3xl text-orange-500 font-bold font-sans'>Register!</h2>
-      <form    className="bg-white text-orange-500 mt-2 space-y-4 max-w-md mx-auto p-4 border border-gray-300 rounded">
+      <form  onSubmit={handleSubmit}   className=" max-h-[70vh] overflow-auto bg-white text-orange-500 mt-2 space-y-4 max-w-md mx-auto p-4 border border-gray-300 rounded">
         <div>
           <label className="block">Name:</label>
           <input
             type="text"
             name="name"
-            value={formData.name}
-            onChange={handleChange}
+            value={name}
+            onChange={(e)=>{dispatch(setName(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           />
-          {errors.name && <p className="text-red-500">{errors.name}</p>}
         </div>
 
         <div>
@@ -181,11 +240,11 @@ const Register = () => {
           <input
             type="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={regEmail}
+            onChange={(e)=>{dispatch(setRegEmail(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           />
-          {errors.email && <p className="text-red-500">{errors.email}</p>}
+          {!emailValidation && <p className="text-red-500">{error.email}</p>}
         </div>
 
         <div>
@@ -193,11 +252,11 @@ const Register = () => {
           <input
             type="text"
             name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
+            value={phoneNumber}
+            onChange={(e)=>{dispatch(setPhoneNumber(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           />
-          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber}</p>}
+          {!phoneValidation && <p className="text-red-500">{error.phoneNumber}</p>}
         </div>
 
         <div>
@@ -205,24 +264,26 @@ const Register = () => {
           <input
             type="password"
             name="password"
-            value={formData.password}
-            onChange={handleChange}
+            value={regPassword}
+            onChange={(e)=>{dispatch(setRegPassword(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           />
-          {errors.password && <p className="text-red-500">{errors.password}</p>}
+          {!passwordValidation && <p className="text-red-500">{error.password}</p>}
         </div>
 
         <div>
           <label className="block">Role:</label>
           <select
             name="selectedRole"
-            value={formData.selectedRole}
-            onChange={handleChange}
+            value={regRole}
+            onChange={(e)=>{dispatch(setRegRole(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           >
-            <option value="admin">Admin</option>
+            <option value="dealership">Dealership</option>
             <option value="user">User</option>
           </select>
+          {!roleValidation && <p className="text-red-500">{error.selectedRole}</p>}
+
         </div>
 
         <div>
@@ -230,38 +291,46 @@ const Register = () => {
           <input
             type="text"
             name="location"
-            value={formData.location}
-            onChange={handleChange}
+            value={location}
+            onChange={(e)=>{dispatch(setLocation(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           />
-          {errors.location && <p className="text-red-500">{errors.location}</p>}
+          {!locationValidation && <p className="text-red-500">{error.location}</p>}
         </div>
-
+        {regRole!=="user"?
         <div>
           <label className="block">Dealer Info:</label>
           <input
             type="text"
             name="dealerInfo"
-            value={formData.dealerInfo}
-            onChange={handleChange}
+            value={dealerInfo}
+            onChange={(e)=>{dispatch(setDealerInfo(e.target.value))}}
             className=" text-black w-full border border-gray-300 p-2 rounded"
           />
+          {!dealerInfoValidation && <p className="text-red-500">{error.dealerInfo}</p>}
+
         </div>
 
-        <div>
+        :<div>
           <label className="block">User Info:</label>
           <input
             type="text"
             name="userInfo"
-            value={formData.userInfo}
-            onChange={handleChange}
+            value={userInfo}
+            onChange={(e)=>{dispatch(setUserInfo(e.target.value))}}
             className="text-black w-full border border-gray-300 p-2 rounded"
           />
-        </div>
+          {!userInfoValidation && <p className="text-red-500">{error.userInfo}</p>}
+        </div>}
 
-        <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-2 rounded">
+        {emailValidation && passwordValidation && roleValidation && phoneValidation && locationValidation && (dealerInfoValidation || userInfoValidation)
+        ?<button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-2 rounded">
           Submit
         </button>
+        :<button type="submit" className="w-full bg-slate-300 text-white p-2 rounded">
+        Submit
+      </button>
+        }
       </form>
       </div>
   );

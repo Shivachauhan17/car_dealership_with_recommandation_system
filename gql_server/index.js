@@ -9,7 +9,7 @@ const {JWT_SECRET}=require('./config/config')
 
 const connectMongo=require('./utils/connect_db')
 const { Query } = require('mongoose')
-// connectMongo()
+connectMongo()
 
 
 const Car=require('./models/car')
@@ -444,6 +444,27 @@ const resolvers={
 
     }
 }
+
+const server=new ApolloServer({
+    typeDefs,
+    resolvers
+})
+
+startStandaloneServer(server,{
+    listen:{port:4000},
+    context: async ({ req, res }) => {
+        const auth = req ? req.headers.authorization : null
+        if (auth && auth.startsWith('Bearer ')) {
+          const decodedToken = jwt.verify(
+            auth.substring(7), JWT_SECRET
+          )
+        
+          return decodedToken
+        }
+      },
+}).then(({url})=>{
+    console.log(`server is ready at ${url}`)
+})
 
 module.exports={
     resolvers,

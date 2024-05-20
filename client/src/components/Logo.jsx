@@ -1,14 +1,14 @@
 import React,{useState,useEffect,memo} from 'react'
 import img1 from '../../public/images/icons8-motorcar-hands-32.png'
 import img2 from '../../public/images/icons8-motorcar-hands-96.png'
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 
 function Logo() {
 
   const [imgsrc,setImgSrc]=useState(null)
-  console.log(imgsrc)
+  const navigate=useNavigate()
 
   const updateImageSrc = () => {
     if (window.innerWidth >= 1024) {
@@ -30,10 +30,10 @@ function Logo() {
 
   return (
     
-      <div className='p-[5px] flex justify-start justify-items-center font-black	dark:text-white '>
-        <h3>M</h3>
+      <div onClick={()=>{navigate('/')}} className='p-[5px]  hover:cursor-pointer  flex justify-start justify-items-center font-black	dark:text-white '>
+        <h3 className='text-lg lg:text-2xl'>M</h3>
         <img className='h-[30px]' src={imgsrc} alt="responsice-logo" />
-        <h3>TORMart</h3>
+        <h3 className='text-lg lg:text-2xl'>TORMart</h3>
       </div>
      
   )

@@ -4,13 +4,13 @@ import {createSlice} from '@reduxjs/toolkit'
 const initialState={
     loginEmail:"",
     loginPassword:"",
-    loginRole:"admin",
+    loginRole:"dealership",
 
     name:"",
     regEmail:"",
     phoneNumber:null,
     regPassword:"",
-    regRole:"",
+    regRole:"dealership",
     location:"",
     dealerInfo:"",
     userInfo:""

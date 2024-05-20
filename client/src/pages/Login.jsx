@@ -4,7 +4,7 @@ import LoginForm from '../components/login/Login'
 
 function Login() {
   return (
-    <div className=" bg-[url('/images/phone-bg.jpg')] bg-cover bg-fit h-screen ">
+    <div className=" bg-[url('/images/phone-bg.jpg')] bg-cover bg-fit h-screen lg:bg-[url('/images/laptop-bg.jpg')]">
         <LoginSignupNav/>
         <LoginForm/>
     </div>
