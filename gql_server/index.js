@@ -8,6 +8,7 @@ const jwt=require('jsonwebtoken')
 const {JWT_SECRET}=require('./config/config')
 
 const connectMongo=require('./utils/connect_db')
+
 const { Query } = require('mongoose')
 connectMongo()
 
@@ -97,6 +98,7 @@ const typeDefs=`
         msg:String!
         token:String!
         error:String!
+        type:String!
     }
 
     type Mutation{
@@ -293,17 +295,17 @@ const resolvers={
                     console.log("as a dealer")
                     const dealership=await Dealership.findOne({dealership_email:email})
                     if(!dealership)
-                        return {msg:null,token:null,error:"no such dealership exists"}
+                        return {msg:null,token:null,error:"no such dealership exists",type:""}
                     const isMatch=bcrypt.compare(password,dealership.password)
                     if(!isMatch)
-                        return {msg:null,token:null,error:"invalid credentials, Please Try agauin"}
+                        return {msg:null,token:null,error:"invalid credentials, Please Try agauin",type:""}
                     const userForToken = {
                         username: dealership.dealership_email,
                         type:"dealership",
                         id: dealership.id,
                     } 
                     const token=await jwt.sign(userForToken,JWT_SECRET)
-                    return  {msg:"dealership successfully verified logging you in",token:token,error:null}
+                    return  {msg:"dealership successfully verified logging you in",token:token,error:null,type:"dealership"}
         
                 }
                 else{
@@ -320,7 +322,7 @@ const resolvers={
                         id: user.id,
                     } 
                     const token=await jwt.sign(userForToken,jwtSecret)
-                    return {msg:"user successfully verified logging you in",token:token,error:null}
+                    return {msg:"user successfully verified logging you in",token:token,error:null,type:"user"}
                 }
 
             }

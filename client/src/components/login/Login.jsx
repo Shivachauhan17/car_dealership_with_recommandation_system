@@ -11,7 +11,8 @@ const LOGIN=gql`
     login(email:$email,password:$password,selectedRole:$selectedRole){
       token
       msg
-      token
+      type
+
     }
   }
 `
@@ -35,6 +36,7 @@ const Login = () => {
 
   const [login]=useMutation(LOGIN,{
     onError:(error)=>{
+      
       const messages=error.graphQLErrors.map(e=>e.message).join('\n')
       setErrors(messages)
       Swal.fire({
@@ -53,7 +55,9 @@ const Login = () => {
         })
       }
       else{
+        console.log(result)
         localStorage.setItem('token', result.token)
+        localStorage.setItem('userType', result.type)
         Swal.fire({
           icon:'success',
           title:'Success!',
