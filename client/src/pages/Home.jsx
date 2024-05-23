@@ -1,12 +1,17 @@
 import React from 'react'
 import AllCars from '../components/home/AllCars'
-import MobileCommonNav from '../components/MobileCommonNav'
+import Nav from '../components/Nav'
+import Filter from '../components/home/Filter'
 
 function Home() {
   return (
     <div>
-        <MobileCommonNav/>
-        <AllCars/>
+        <Nav/>
+        <div className='m-6'>
+          <Filter/>
+          <AllCars/>
+        </div>
+        
     </div>
   )
 }

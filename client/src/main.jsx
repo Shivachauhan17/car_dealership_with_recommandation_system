@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client'
 import {Provider} from "react-redux"
 import {configureStore} from '@reduxjs/toolkit'
 import loginRegisterReducer from './store/authForms/loginRegisterReducer'
+import homeReducer from './store/homePage/homeReducer'
 import App from './App'
 import './index.css'
 
@@ -14,7 +15,8 @@ const client = new ApolloClient({
 
 const store=configureStore({
   reducer:{
-    form:loginRegisterReducer
+    form:loginRegisterReducer,
+    home:homeReducer
   }
 })
 

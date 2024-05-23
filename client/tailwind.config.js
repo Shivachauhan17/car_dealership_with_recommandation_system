@@ -6,6 +6,7 @@ export default {
   ],
   theme: {
     extend: {
+      
       backgroundImage:{
         'phone-ls-bg':"url('/images/phone-bg.jpg')"
       }

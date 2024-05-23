@@ -1,12 +1,13 @@
-import React from 'react'
+import React,{memo} from 'react'
 import {gql,useQuery} from '@apollo/client'
 import Loader from '../Loader'
 import Error from '../Error'
 import Swal from 'sweetalert2';
-import { SiPagespeedinsights } from "react-icons/si";
-import { LiaRupeeSignSolid } from "react-icons/lia";
 
-
+import {setAllCars,
+    setFilteredCars} from '../../store/homePage/homeReducer'
+import { useDispatch,useSelector } from 'react-redux';
+import CarCardsList from './CarCardsList';
 
 const GET_ALL_CARS=gql`
     query {viewAllCars{
@@ -22,8 +23,8 @@ const GET_ALL_CARS=gql`
 `
 
 function AllCars() {
-    const { loading, error, data } = useQuery(GET_ALL_CARS)
-    console.log(data)
+    const dispatch=useDispatch()
+    const { loading, error, data } = useQuery(GET_ALL_CARS)    
 
     if(error){
         Swal.fire({
@@ -34,37 +35,18 @@ function AllCars() {
 
         return <Error text={"error in fetching the data the of all cars"} />
     }
-    if(loading)
+    else if(loading)
         return <Loader/>
-
+    else{
+        dispatch(setAllCars(data.viewAllCars))
+        dispatch(setFilteredCars(data.viewAllCars))
+    }
 
   return (
-    <div>
-        <ul>
-            {
-               data.viewAllCars.map((item,index)=>(
-                <li>
-                    <h4>{item.name}</h4>
-                    <div>
-                        <div>
-                            <LiaRupeeSignSolid />
-                            <h3>{item.car_info.price}</h3>
-                        </div>
-                        <h4>{item.type}</h4>
-                    </div>
-                    <p>Year:{item.model}</p>
-                    <div>
-                        <SiPagespeedinsights/>
-                        <p>{item.car_info.milage}</p>
-                    </div>
-                    <p>{item.car_info.description}</p>
-                </li>
-               )) 
-
-            }
-        </ul>
+    <div className='flex justify-center'>
+        <CarCardsList/>
     </div>
   )
 }
 
-export default AllCars
+export default memo(AllCars)

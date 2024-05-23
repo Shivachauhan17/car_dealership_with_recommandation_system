@@ -13,7 +13,8 @@ const initialState={
     regRole:"dealership",
     location:"",
     dealerInfo:"",
-    userInfo:""
+    userInfo:"",
+
 }
 
 
@@ -102,7 +103,7 @@ export const {
     setLocation,
     setDealerInfo,
     setUserInfo
-  } = reducer.actions;
+    } = reducer.actions;
   
 
 export default reducer.reducer
