@@ -11,6 +11,7 @@ import CarCardsList from './CarCardsList';
 
 const GET_ALL_CARS=gql`
     query {viewAllCars{
+        id
         name
         type    
         model

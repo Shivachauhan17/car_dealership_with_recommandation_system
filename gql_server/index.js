@@ -105,7 +105,7 @@ const typeDefs=`
         login(email:String!,password:String!,selectedRole:String!):LoginResponse!
         register(name:String!,email:String!,phoneNumber:String!,password:String!,selectedRole:String!,location:String!,dealerInfo:String!,userInfo:String!):String!
         dealCompleted(dealershipEmail:String!,carID:String!,userEmail:String!,dealID:String!,sold_price:Int!,sold_date:String!,description:String!):String!
-        addCarToDealership(carID:String!,dealershipEmail:String!):String!
+        addCarToDealership(carID:String!):String!
         addDealToDealership(carID:String!,dealershipEmail:String!,discount:Int!,description:String!):String!
 
     }
@@ -383,8 +383,11 @@ const resolvers={
             }
         },
 
-        addCarToDealership:async(root,args)=>{
-            const {carID,dealershipEmail}=args
+        addCarToDealership:async(root,args,context)=>{
+            
+            const dealershipEmail=context.username
+            
+            const {carID}=args
 
             if(!carID || !dealershipEmail){
                 throw new GraphQLError("input parameter does not sent correctly")
@@ -407,8 +410,9 @@ const resolvers={
         },
 
 
-        addDealToDealership:async(root,args)=>{
-            const {dealershipEmail,discount,description,carID}=args
+        addDealToDealership:async(root,args,context)=>{
+            const dealershipEmail=context.username
+            const {discount,description,carID}=args
             if(!dealershipEmail || !discount || !carID || !description){
                 throw new GraphQLError("input parameter does not sent correctly")
             }

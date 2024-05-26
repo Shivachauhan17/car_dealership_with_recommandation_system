@@ -3,10 +3,25 @@ const  {ApolloServer,gql} =require('apollo-server')
 const {resolvers,typeDefs}=require('../index')
 const connectMongo=require('../utils/connect_db')
 const mongoose=require('mongoose')
+const jwt=require('jsonwebtoken')
+const {JWT_SECRET}=require('../config/config')
+
+
+const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNoaXZhbmJkMjAxOUBnbWFpbC5jb20iLCJ0eXBlIjoiZGVhbGVyc2hpcCIsImlkIjoiNjY0Mzk5YTNlOTFlMjhmNTI4YmRiZDVkIiwiaWF0IjoxNzE2NzQ5ODU1fQ.U0eceoh9c3CLlXto7SllkZY_MWLuXvgvvTPBfjl3Qx4"
 
 const server=new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context: () => {
+        const auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNoaXZhbmJkMjAxOUBnbWFpbC5jb20iLCJ0eXBlIjoiZGVhbGVyc2hpcCIsImlkIjoiNjY0Mzk5YTNlOTFlMjhmNTI4YmRiZDVkIiwiaWF0IjoxNzE2NzQ5ODU1fQ.U0eceoh9c3CLlXto7SllkZY_MWLuXvgvvTPBfjl3Qx4"
+        if (auth ) {
+          const decodedToken = jwt.verify(
+            auth, JWT_SECRET
+          )
+        
+          return decodedToken
+        }
+        }
 })
 
 const {query,mutate}=createTestClient(server)
@@ -222,16 +237,16 @@ describe("testing all dealership mutations",()=>{
 
     test("add car to dealership",async()=>{
         const ADD_CAR_TO_DEALERSHIP=gql`
-            mutation AddCarToDealership($carID:String!,$dealershipEmail:String!){
-                addCarToDealership(carID:$carID,dealershipEmail:$dealershipEmail)
+            mutation AddCarToDealership($carID:String!){
+                addCarToDealership(carID:$carID)
             }
         `
 
         const expectedValue="successfully added to dealership"
 
         const variables={
-            carID:"6643a1e7f81da95cb3a5ff38",
-            dealershipEmail:"shivanbd2019@gmail.com"
+            carID:"6643a1e7f81da95cb3a5ff38"
+           
         }
 
         const result=await mutate({mutation:ADD_CAR_TO_DEALERSHIP,variables})

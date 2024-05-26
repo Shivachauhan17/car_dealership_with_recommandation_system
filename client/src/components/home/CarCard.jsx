@@ -2,6 +2,7 @@ import React,{memo} from 'react'
 import { SiPagespeedinsights } from "react-icons/si";
 import { LiaRupeeSignSolid } from "react-icons/lia";
 import AddToInventoryBtn from './AddToInventoryBtn';
+import CreateDealBtn from './CreateDealBtn';
 
 function CarCard({item}) {
     const userType = localStorage.getItem('userType');
@@ -22,8 +23,9 @@ function CarCard({item}) {
                     </div>
                     <p className='font-semibold text-slate-500'>{item.car_info.description}</p>
                     {userType==="dealership"
-                    ?<div>
-                        <AddToInventoryBtn item={item}/>
+                    ?<div className='flex justify-between justify-items-center'>
+                        <AddToInventoryBtn id={item.id}/>
+                        <CreateDealBtn item={item}/>
                     </div>
                     :null}
                 </li>

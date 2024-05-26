@@ -50,6 +50,7 @@ describe('Testing auth mutations',()=>{
         mutation Login($email:String!,$password:String!,$selectedRole:String!){
             login(email:$email,password:$password,selectedRole:$selectedRole){
                 msg
+                token
             }
         }
         `
@@ -62,8 +63,10 @@ describe('Testing auth mutations',()=>{
 
         const result=await mutate({mutation:LOGIN_MUTATION,variables})
         console.log(result)
-        if(result.data!==undefined)
-        expect(result.data.login.msg).toEqual(expectedValue)
+        if(result.data!==undefined){
+            console.log(result.data.login.token)
+            expect(result.data.login.msg).toEqual(expectedValue)
+        }
     })
 
 })
