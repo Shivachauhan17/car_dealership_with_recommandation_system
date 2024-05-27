@@ -5,6 +5,7 @@ import LoginSignup from './pages/LoginSignup'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Home from './pages/Home'
+import Inventory from './pages/Inventory'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path='/register' exact element={<Register/>}/>
         <Route path='/login' exact element={<Login/>}/>
         <Route path='/home' exact element={<Home/>}/>
+        <Route path='/inventory' exact element={<Inventory/>}/>
       </Routes>
     </BrowserRouter>
   )

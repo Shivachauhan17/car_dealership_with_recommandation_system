@@ -1,15 +1,66 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { IoMdClose } from "react-icons/io";
 import {useSelector,useDispatch} from 'react-redux'
 import {setDealDescription,setDealDiscount,setShowDealPopUp} from '../../store/homePage/homeReducer'
+import { useMutation,gql } from '@apollo/client';
+import Swal from 'sweetalert2';
+
+const ADD_A_DEAL=gql`
+  mutation AddDealToDealership($carID:String!,$discount:Int!,$description:String!){
+    addDealToDealership(carID:$carID,discount:$discount,description:$description)
+  }
+`
 
 function CreateDeal() {
+  
+  const [addCar]=useMutation(ADD_A_DEAL,{
+    onError:(error)=>{
+      console.log(error)
+      Swal.fire({
+        icon:'error',
+        title:'Oops..',
+        text:"some unexpected error occured please report"
+      })
+    },
+    onCompleted:(data)=>{
+      const result=data.addDealToDealership
+      if(result.error){
+        Swal.fire({
+          icon:'error',
+          title:'Oops..',
+          text:result.error
+        })
+      }
+      else{
+        console.log(result)
+       
+        Swal.fire({
+          icon:'success',
+          title:'Success!',
+          text:result
+        })
+
+        dispatch(setDealDescription(""))
+        dispatch(setDealDiscount(0))
+        dispatch(setShowDealPopUp(false))
+       
+      }
+    }
+  })
+  const item=useSelector(state=>state.home.selectedCar4Deal)
     const showPopUp=useSelector(state=>state.home.showDealPopUp)
     const dispatch=useDispatch()
     const dealDescription=useSelector(state=>state.home.dealDescription)
     const dealDiscount=useSelector(state=>state.home.dealDiscount)
     const [dealDescriptionValidation,setDealDescriptionValidation]=useState(false)
-    console.log(dealDescriptionValidation)
+
+    const variables={
+      carID:item.id,
+      discount:dealDiscount,
+      description:dealDescription
+    }
+    console.log(variables)
+
     const [error,setError]=useState({
       description:""
     })
@@ -38,7 +89,7 @@ function CreateDeal() {
           <div className='flex justify-between justify-items-center'>
             <h2 className='text-3xl text-orange-500 font-bold font-sans'>Fill Deal Details</h2>
             
-            <IoMdClose onClick={()=>{setShowDealPopUp(false)}} className='text-2xl font-bold hover:cursor-pointer'/>
+            <IoMdClose onClick={()=>{dispatch(setShowDealPopUp(false))}} className='text-2xl font-bold hover:cursor-pointer'/>
 
           </div>
           <div>
@@ -69,7 +120,7 @@ function CreateDeal() {
           </div>
           
           {dealDescriptionValidation 
-            ?<button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-2 rounded">Add</button>
+            ?<button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-2 rounded" onClick={(e)=>{e.preventDefault();addCar({variables:variables})}}>Add</button>
             :<button type="submit" className="w-full bg-slate-300  text-white p-2 rounded">Add</button>
           }
           </form>

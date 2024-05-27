@@ -4,11 +4,15 @@ const initialState={
     filterWord:"",
     allCars:[],
     filteredCars:[],
+    page:1,
+    carsOnPage:[],
+    hasMore:true,
 
     showDealPopUp:false,
     dealDescription:"",
     dealDiscount:0,
-    selectedCar4Deal:{}
+    selectedCar4Deal:{},
+    isFiltered:false
 
 }
 
@@ -57,7 +61,32 @@ const reducer=createSlice({
                 ...state,
                 selectedCar4Deal:action.payload
             }
+        },
+        setPage(state,action){
+            return{
+                ...state,
+                page:action.payload
+            }
+        },
+        setCarsOnPage(state,action){
+            return{
+                ...state,
+                carsOnPage:action.payload
+            }
+        },
+        setHasMore(state,action){
+            return{
+                ...state,
+                hasMore:action.payload
+            }
+        },
+        setIsFiltered(state,action){
+            return{
+                ...state,
+                isFiltered:action.payload
+            }
         }
+        
     }
     
 })
@@ -69,7 +98,11 @@ export const {
     setDealDescription,
     setDealDiscount,
     setShowDealPopUp,
-    setSelectedCar4Deal
+    setSelectedCar4Deal,
+    setPage,
+    setCarsOnPage,
+    setHasMore,
+    setIsFiltered
 }=reducer.actions
 
 export default reducer.reducer

@@ -7,7 +7,7 @@ import CreateDealBtn from './CreateDealBtn';
 function CarCard({item}) {
     const userType = localStorage.getItem('userType');
   return (
-    <li className='transition duration-500 ease-in-out border-[1px] border-slate-200 my-4 p-10 hover:shadow-md rounded-lg hover:bg-orange-300'>
+    <li className='transition duration-500 ease-in-out border-[1px] border-slate-200 my-4 p-10 hover:shadow-md rounded-lg hover:bg-orange-300 lg:w-[500px]'>
                     <h4 className='font-bold text-xl'>{item.name}</h4>
                     <div className='font-semibold text-md flex justify-between justify-items-center'>
                         <div className='flex justify-center justify-items-center'>

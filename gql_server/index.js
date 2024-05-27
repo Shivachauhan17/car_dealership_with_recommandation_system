@@ -106,7 +106,7 @@ const typeDefs=`
         register(name:String!,email:String!,phoneNumber:String!,password:String!,selectedRole:String!,location:String!,dealerInfo:String!,userInfo:String!):String!
         dealCompleted(dealershipEmail:String!,carID:String!,userEmail:String!,dealID:String!,sold_price:Int!,sold_date:String!,description:String!):String!
         addCarToDealership(carID:String!):String!
-        addDealToDealership(carID:String!,dealershipEmail:String!,discount:Int!,description:String!):String!
+        addDealToDealership(carID:String!,discount:Int!,description:String!):String!
 
     }
 
@@ -413,7 +413,7 @@ const resolvers={
         addDealToDealership:async(root,args,context)=>{
             const dealershipEmail=context.username
             const {discount,description,carID}=args
-            if(!dealershipEmail || !discount || !carID || !description){
+            if(!dealershipEmail || !carID || !description){
                 throw new GraphQLError("input parameter does not sent correctly")
             }
             try{
