@@ -3,8 +3,10 @@ import { SiPagespeedinsights } from "react-icons/si";
 import { LiaRupeeSignSolid } from "react-icons/lia";
 import AddToInventoryBtn from './AddToInventoryBtn';
 import CreateDealBtn from './CreateDealBtn';
+import { useSelector } from 'react-redux';
 
 function CarCard({item}) {
+    const onHome=useSelector(state=>state.home.onHome)
     const userType = localStorage.getItem('userType');
   return (
     <li className='transition duration-500 ease-in-out border-[1px] border-slate-200 my-4 p-10 hover:shadow-md rounded-lg hover:bg-orange-300 lg:w-[500px]'>
@@ -24,7 +26,7 @@ function CarCard({item}) {
                     <p className='font-semibold text-slate-500'>{item.car_info.description}</p>
                     {userType==="dealership"
                     ?<div className='flex justify-between justify-items-center'>
-                        <AddToInventoryBtn id={item.id}/>
+                        {onHome?<AddToInventoryBtn id={item.id}/>:null}
                         <CreateDealBtn item={item}/>
                     </div>
                     :null}

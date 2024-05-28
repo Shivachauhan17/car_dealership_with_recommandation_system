@@ -85,13 +85,14 @@ const typeDefs=`
 
     type Query{
         viewAllCars:[Car]!
-        carsOfCertainDealership(dealershipEmail:String!):[Car]!
+        carsOfCertainDealership:[Car]!
         dealsOfCertainDealership(dealershipEmail:String!):[Deal]!
         dealershipWithCertainCar(carID:String!):[Dealership]!
 
         vehicleOwnedByUser(userEmail:String!):[SoldVehicle]!
         viewAllDealsOnCertainCar(carID:String!):[Deal]!
         viewDealershipVehiclesSold(dealershipEmail:String!):[SoldVehicle]!
+        getCategories:[String]!
     }
 
     type LoginResponse{
@@ -116,6 +117,16 @@ const typeDefs=`
 
 const resolvers={
     Query:{
+        getCategories:async(root,args,context)=>{
+            try{
+                const categories=await Car.distinct('type')
+                return categories
+            }
+            catch(e){
+                console.log(e)
+                throw new GraphQLError("failed to fetch list of all categories")
+            }
+        },
         viewAllCars:async(root)=>{
             try{
                 const cars=await Car.find({})
@@ -128,14 +139,15 @@ const resolvers={
             
         },
 
-        carsOfCertainDealership:async(root,args)=>{
-            const {dealershipEmail}=args
+        carsOfCertainDealership:async(root,args,context)=>{
+            const dealershipEmail=context.username
             if(!dealershipEmail){
-                throw new GraphQLError("inpur parameters are not right")
+                throw new GraphQLError("input parameters are not right")
             }
 
             const dealership=await Dealership.findOne({dealership_email:dealershipEmail}).populate('cars')
             return dealership.cars
+
         },
 
         dealsOfCertainDealership:async(root,args)=>{

@@ -274,4 +274,17 @@ describe("testing all dealership mutations",()=>{
         console.log(result)
         expect(result.data.addDealToDealership).toEqual(expectedValue)
     })
+
+    test("get Categories",async()=>{
+        const GET_CATEGORIES=gql`
+            query {getCategories}
+        `
+        
+
+        const result=await query({query:GET_CATEGORIES})
+        console.log(result.data.getCategories)
+        expect(typeof result.data.getCategories[0]).toBe('string')
+    })
+
+
 })

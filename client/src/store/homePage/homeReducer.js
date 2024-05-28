@@ -12,7 +12,9 @@ const initialState={
     dealDescription:"",
     dealDiscount:0,
     selectedCar4Deal:{},
-    isFiltered:false
+    isFiltered:false,
+    //for utilizing same car card compoennt
+    onHome:false
 
 }
 
@@ -85,6 +87,12 @@ const reducer=createSlice({
                 ...state,
                 isFiltered:action.payload
             }
+        },
+        setOnHome(state,action){
+            return{
+                ...state,
+                onHome:action.payload
+            }
         }
         
     }
@@ -102,7 +110,8 @@ export const {
     setPage,
     setCarsOnPage,
     setHasMore,
-    setIsFiltered
+    setIsFiltered,
+    setOnHome
 }=reducer.actions
 
 export default reducer.reducer
