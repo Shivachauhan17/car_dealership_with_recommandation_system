@@ -87,8 +87,8 @@ describe("testing all queries",()=>{
 
     test("deals of certain dealership",async()=>{
         const DEALS_OF_DEALERSHIP=gql`
-            query DealsOfCertainDealership($dealershipEmail:String!){
-                dealsOfCertainDealership(dealershipEmail:$dealershipEmail){
+            query {
+                dealsOfCertainDealership{
                     car_id{
                         name
                         type
@@ -106,11 +106,9 @@ describe("testing all queries",()=>{
                 }
             }
         `
-        const variables={
-            dealershipEmail:"shivanbd2019@gmail.com"
-        }
+        
 
-        const result=await query({query:DEALS_OF_DEALERSHIP,variables})
+        const result=await query({query:DEALS_OF_DEALERSHIP})
         console.log(result.data.dealsOfCertainDealership)
         expect(typeof result.data.dealsOfCertainDealership[0].deal_info.description).toBe('string')
 
@@ -286,5 +284,20 @@ describe("testing all dealership mutations",()=>{
         expect(typeof result.data.getCategories[0]).toBe('string')
     })
 
+    test("delete Deal From Dealership",async()=>{
+        const DELETE_DEAL_FROM_DEALERSHIP=gql`
+            mutation DeleteDealFromDealership($dealID:String!){
+                deleteDealFromDealership(dealID:$dealID)
+            }
+        `
+
+        const variables={
+            dealID:"664656fa035875d25c83310e"
+        }
+
+        const result=await mutate({mutation:DELETE_DEAL_FROM_DEALERSHIP,variables})
+        console.log(result)
+        expect(typeof result.data.deleteDealFromDealership).toBe("string")
+    })
 
 })

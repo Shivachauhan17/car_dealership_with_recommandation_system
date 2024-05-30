@@ -15,7 +15,9 @@ function MobileCommonNav({ showSidebar }) {
             {userType !== "user" && <div 
                 onClick={()=>{navigate('/inventory')}}
                 className='hover:cursor-pointer font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>Inventory</p></div>}
-            {userType !== "user" && <div className='font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>Deals</p></div>}
+            {userType !== "user" && <div 
+                                        onClick={()=>{navigate('/myDeals')}}
+                                        className='font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>Deals</p></div>}
             {userType !== "user" && <div className='font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>Sold</p></div>}
             <div className='font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>LOGOUT</p></div>
         </div>

@@ -5,6 +5,7 @@ import { setContext } from '@apollo/client/link/context'
 import loginRegisterReducer from './store/authForms/loginRegisterReducer'
 import homeReducer from './store/homePage/homeReducer'
 import inventoryReducer from './store/inventory/inventoryReducer'
+import dealReducer from './store/myDeals/dealReducer'
 import App from './App'
 import './index.css'
 
@@ -34,7 +35,8 @@ const store=configureStore({
   reducer:{
     form:loginRegisterReducer,
     home:homeReducer,
-    inventory:inventoryReducer
+    inventory:inventoryReducer,
+    deal:dealReducer
   }
 })
 

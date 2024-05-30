@@ -55,6 +55,7 @@ const typeDefs=`
     }
 
     type Deal{
+        id:ID!
         car_id:Car!
         deal_info:DealInfo!
     }
@@ -86,7 +87,7 @@ const typeDefs=`
     type Query{
         viewAllCars:[Car]!
         carsOfCertainDealership:[Car]!
-        dealsOfCertainDealership(dealershipEmail:String!):[Deal]!
+        dealsOfCertainDealership:[Deal]!
         dealershipWithCertainCar(carID:String!):[Dealership]!
 
         vehicleOwnedByUser(userEmail:String!):[SoldVehicle]!
@@ -108,7 +109,7 @@ const typeDefs=`
         dealCompleted(dealershipEmail:String!,carID:String!,userEmail:String!,dealID:String!,sold_price:Int!,sold_date:String!,description:String!):String!
         addCarToDealership(carID:String!):String!
         addDealToDealership(carID:String!,discount:Int!,description:String!):String!
-
+        deleteDealFromDealership(dealID:String!):String!
     }
 
     
@@ -150,8 +151,8 @@ const resolvers={
 
         },
 
-        dealsOfCertainDealership:async(root,args)=>{
-            const {dealershipEmail}=args
+        dealsOfCertainDealership:async(root,args,context)=>{
+            const dealershipEmail=context.username
             if(!dealershipEmail){
                 throw new GraphQLError("inpur parameters are not right")
             }
@@ -344,6 +345,33 @@ const resolvers={
             }
 
         },
+
+        deleteDealFromDealership:async(root,args,context)=>{
+            const dealershipEmail=context.username
+            const {dealID}=args
+            if(!dealershipEmail || !dealID){
+                throw new GraphQLError("input parameters are not correctl ")
+            }
+
+            try{
+                await Dealership.findOneAndUpdate({
+                    dealership_email:dealershipEmail
+                    },{
+                      $pull:{deals:new mongoose.Types.ObjectId(dealID)}  
+                    })
+
+                await Deal.deleteOne({_id:new mongoose.Types.ObjectId(dealID)})
+                
+                return "successfully removed the deal from dealership"
+
+            }
+            catch(e){
+                console.log(e)
+                throw new GraphQLError("error in removing the deal from dealership")
+            }
+
+        },
+
         dealCompleted:async(root,args)=>{
             const {dealershipEmail,carID,dealID,sold_price,sold_date,description,userEmail}=args
 

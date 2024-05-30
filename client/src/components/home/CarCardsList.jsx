@@ -3,7 +3,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import CreateDeal from './CreateDeal'
 import CarCard from './CarCard'
 import InfiniteScroll from "react-infinite-scroll-component";
-import {setPage,setCarsOnPage,setHasMore} from '../../store/homePage/homeReducer'
+import {setPage,setCarsOnPage,setHasMore,setOnHome} from '../../store/homePage/homeReducer'
 
 
 function CarCardsList() {
@@ -52,6 +52,10 @@ function CarCardsList() {
   useEffect(()=>{
    dispatch(setCarsOnPage(cars.slice(0,limit)))
   },[cars])
+
+  useEffect(()=>{
+   dispatch(setOnHome(true))
+  },[dispatch])
 
   return (
    <div>
