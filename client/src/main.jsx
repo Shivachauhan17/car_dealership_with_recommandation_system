@@ -6,6 +6,8 @@ import loginRegisterReducer from './store/authForms/loginRegisterReducer'
 import homeReducer from './store/homePage/homeReducer'
 import inventoryReducer from './store/inventory/inventoryReducer'
 import dealReducer from './store/myDeals/dealReducer'
+import soldReducer from './store/sold/soldReducer'
+import mine from './store/my_vehicle/myVehicleReducer'
 import App from './App'
 import './index.css'
 
@@ -36,7 +38,9 @@ const store=configureStore({
     form:loginRegisterReducer,
     home:homeReducer,
     inventory:inventoryReducer,
-    deal:dealReducer
+    deal:dealReducer,
+    sold:soldReducer,
+    mine:mine
   }
 })
 

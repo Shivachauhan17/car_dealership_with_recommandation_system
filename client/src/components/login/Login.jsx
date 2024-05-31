@@ -28,6 +28,7 @@ const Login = () => {
   const loginEmail=useSelector(state=>state.form.loginEmail)
   const loginPassword=useSelector(state=>state.form.loginPassword)
   const loginRole=useSelector(state=>state.form.loginRole)
+  
   const [error, setError] = useState({
     email: '',
     password: '',

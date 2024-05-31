@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import Home from './pages/Home'
 import Inventory from './pages/Inventory'
 import MyDeals from './pages/MyDeals'
+import Sold from './pages/Sold'
+import MyVehicle from './pages/MyVehicle'
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path='/home' exact element={<Home/>}/>
         <Route path='/inventory' exact element={<Inventory/>}/>
         <Route path='/myDeals' exact element={<MyDeals/>}/>
+        <Route path='/sold' exact element={<Sold/>}/>
+        <Route path='/myVehicle' exact element={<MyVehicle/>}/>
       </Routes>
     </BrowserRouter>
   )

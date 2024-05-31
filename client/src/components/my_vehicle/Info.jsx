@@ -1,30 +1,26 @@
 import React,{useEffect,memo} from 'react'
 import {useQuery, gql} from '@apollo/client'
 import { useSelector,useDispatch } from 'react-redux'
-import { setAllDeals,setFilteredDeals,setIsFiltered,setFilterCategory } from '../../store/myDeals/dealReducer'
-import {setAllCategories } from '../../store/inventory/inventoryReducer'
+import {setallMine,setFilteredMine,setFilterCategory,setIsFiltered  } from '../../store/my_vehicle/myVehicleReducer'
+import { setAllCategories } from '../../store/inventory/inventoryReducer'
 
 import Swal from 'sweetalert2'
 
-const DEALS_OF_DEALERSHIP=gql`
+const OWNED_BY_USER=gql`
     query {
-        dealsOfCertainDealership{
+        vehicleOwnedByUser{
             id
-            car_id{
-                
-                    name
-                    type
-                    model
-                    car_info{
-                        price
-                        milage
-                        description
-                    }
-                }
-                deal_info{
-                    discount
+            car_id {
+                id
+                type
+                name
+                model
+                car_info {
+                    price
+                    milage
                     description
                 }
+            }
         }
     }
 `
@@ -36,23 +32,25 @@ const GET_CATEGORIES=gql`
 `
 
 function Info() {
-    const deals=useSelector(state=>state.deal.allDeals)
-    const filterCategory=useSelector(state=>state.deal.filterCategory)
-    const filteredDeals=useSelector(state=>state.deal.filteredDeals)
+    const allMine=useSelector(state=>state.mine.allMine)
+    const filterCategory=useSelector(state=>state.mine.filterCategory)
+    const filteredMine=useSelector(state=>state.mine.filteredMine)
+    console.log(filteredMine)
     const allCategories=useSelector(state=>state.inventory.allCategories)
+    
 
     const dispatch=useDispatch()
-    const { data, loading, error } = useQuery(DEALS_OF_DEALERSHIP, {
+    const { data, loading, error } = useQuery(OWNED_BY_USER, {
         onCompleted: (data) => {
-          dispatch(setAllDeals(data.dealsOfCertainDealership))
-          dispatch(setFilteredDeals(data.dealsOfCertainDealership))
+          dispatch(setallMine(data.vehicleOwnedByUser))
+          dispatch(setFilteredMine(data.vehicleOwnedByUser))
         },
         onError: (error) => {
           console.log(error)
           Swal.fire({
             icon: 'error',
             title: 'Oops..',
-            text: "Error in fetching the data of deals"
+            text: "Error in fetching the data of Cars in Inventory"
           })
         }
       })
@@ -68,30 +66,26 @@ function Info() {
           }
       })
 
+      useEffect(() => {
+        if (data) {
+          dispatch(setallMine(data.vehicleOwnedByUser))
+          dispatch(setFilteredMine(data.vehicleOwnedByUser))
+        }
+      }, [data, dispatch])
+
       useEffect(()=>{
         if (catData && catData.getCategories) {
             dispatch(setAllCategories(catData.getCategories))
           }
       },[dispatch,catData])
-
-      useEffect(() => {
-        if (data) {
-          dispatch(setAllDeals(data.dealsOfCertainDealership))
-          dispatch(setFilteredDeals(data.dealsOfCertainDealership))
-        }
-      }, [data, dispatch])
-
-     
    
       useEffect(()=>{
         if(filterCategory==="All Categories"){
             dispatch(setIsFiltered(false))
-            dispatch(setFilteredDeals(deals))
+            dispatch(setFilteredMine(allMine))
         }
         else{
-
-            
-            dispatch(setFilteredDeals(deals.filter(elem=>elem.car_id.type===filterCategory)))
+            dispatch(setFilteredMine(allMine.filter(elem=>elem.car_id.type===filterCategory)))
             dispatch(setIsFiltered(true))}
         
 
@@ -103,8 +97,8 @@ function Info() {
         <div className='flex flex-col justify-start gap-[5px] justify-items-start'>
             <div className='border-[2px] text-orange-400 border-orange-400 h-16 w-48 lg:w-64 flex justify-center items-center'>
                 <div className='p-4 font-semibold   flex justify-start items-end gap-[5px] '>
-                    <p>Deals Of Selected CateGory: </p>
-                    <p>{filteredDeals.length}</p>
+                    <p>Cars In Selected CateGory: </p>
+                    <p>{filteredMine.length}</p>
                 </div>
             </div>
             <div className='lg:hidden'>
@@ -138,8 +132,8 @@ function Info() {
         
         <div className='border-[2px] text-orange-400 border-orange-400 h-16 w-48 lg:w-64 flex justify-center items-center'>
             <div className='p-4 font-semibold   flex justify-start items-end gap-[5px] '>
-                <p>Total Deals</p>
-                <p>{deals.length}</p>
+                <p>Total In Inventory</p>
+                <p>{allMine.length}</p>
             </div>
         </div>
     </div>

@@ -182,10 +182,20 @@ describe("testing all queries",()=>{
 
     test("dealership vehicle sold",async()=>{
         const DEALERSHIP_VEHICLE_SOLD=gql`
-            query ViewDealershipVehiclesSold($dealershipEmail:String!){
-                viewDealershipVehiclesSold(dealershipEmail:$dealershipEmail){
+            query {
+                viewDealershipVehiclesSold{
                     id
-
+                    car_id {
+                        id
+                        type
+                        name
+                        model
+                        car_info {
+                            price
+                            milage
+                            description
+                        }
+                    }
                     vehicle_info{
                         sold_price
                         sold_date
@@ -194,12 +204,9 @@ describe("testing all queries",()=>{
                 }
             }    
         `
-        const variables={
-            dealershipEmail:"shivanbd2019@gmail.com"
-        }
-
+     
         const expectedValue=200000
-        const result=await query({query:DEALERSHIP_VEHICLE_SOLD,variables})
+        const result=await query({query:DEALERSHIP_VEHICLE_SOLD})
         console.log(result)
         expect(result.data.viewDealershipVehiclesSold[0].vehicle_info.sold_price).toEqual(expectedValue)
     })

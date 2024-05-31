@@ -45,7 +45,7 @@ const typeDefs=`
 
     type SoldVehicle{
         id:ID!
-        car_id:Car
+        car_id:Car!
         vehicle_info:SoldVehicleInfo!
     }
 
@@ -90,9 +90,9 @@ const typeDefs=`
         dealsOfCertainDealership:[Deal]!
         dealershipWithCertainCar(carID:String!):[Dealership]!
 
-        vehicleOwnedByUser(userEmail:String!):[SoldVehicle]!
+        vehicleOwnedByUser:[SoldVehicle]!
         viewAllDealsOnCertainCar(carID:String!):[Deal]!
-        viewDealershipVehiclesSold(dealershipEmail:String!):[SoldVehicle]!
+        viewDealershipVehiclesSold:[SoldVehicle]!
         getCategories:[String]!
     }
 
@@ -187,8 +187,8 @@ const resolvers={
             return dealerships
         },
 
-        vehicleOwnedByUser:async(root,args)=>{
-            const {userEmail}=args
+        vehicleOwnedByUser:async(root,args,context)=>{
+            const userEmail=context.username
             if(!userEmail){
                 throw new GraphQLError("inpur parameters are not right")
             }
@@ -217,8 +217,8 @@ const resolvers={
             
             return deals
         },
-        viewDealershipVehiclesSold:async(root,args)=>{
-            const {dealershipEmail}=args
+        viewDealershipVehiclesSold:async(root,args,context)=>{
+            const dealershipEmail=context.username
             if(!dealershipEmail){
                 throw new GraphQLError("input parameters are not given correctly")
             }
@@ -322,8 +322,9 @@ const resolvers={
         
                 }
                 else{
-                    console.log("as a dealer")
-                    const user=await User.findOne({dealership_email:email})
+                    console.log("as a user")
+                    const user=await User.findOne({user_email:email})
+                    
                     if(!user)
                         return {msg:null,token:null,error:"no such user exists"}
                     const isMatch=bcrypt.compare(password,user.password)
@@ -334,7 +335,8 @@ const resolvers={
                         type:"user",
                         id: user.id,
                     } 
-                    const token=await jwt.sign(userForToken,jwtSecret)
+                    const token=await jwt.sign(userForToken,JWT_SECRET)
+                    console.log(token)
                     return {msg:"user successfully verified logging you in",token:token,error:null,type:"user"}
                 }
 

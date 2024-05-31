@@ -10,7 +10,7 @@ function CommonNav() {
             <div 
             onClick={()=>{navigate('/home')}}
             className='hover:cursor-pointer font-semibold w-32 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
-                <p>All Cars</p>
+                <p>Home</p>
             </div>
             {/* {userType === "user" && (
                 <div className='font-semibold w-32 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
@@ -19,6 +19,7 @@ function CommonNav() {
             )} */}
             {userType === "user" && (
                 <div 
+                onClick={()=>{navigate('/myVehicle')}}
                 className='font-semibold w-32 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
                     <p>My Vehicles</p>
                 </div>
@@ -38,11 +39,17 @@ function CommonNav() {
                 </div>
             )}
             {userType !== "user" && (
-                <div className='font-semibold w-32 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
+                <div 
+                onClick={()=>{navigate('/sold')}}
+                className='font-semibold w-32 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
                     <p>Sold</p>
                 </div>
             )}
-            <button className='text-white tracking-wider font-semibold text-xl bg-sky-400 hover:bg-sky-300 transition-colors duration-2000 ease-in-out rounded-md p-[10px]'>
+            <button className='text-white tracking-wider font-semibold text-xl bg-sky-400 hover:bg-sky-300 transition-colors duration-2000 ease-in-out rounded-md p-[10px]'
+            onClick={()=>{localStorage.removeItem("token");
+                            navigate('/')
+            }}
+            >
                 LOGOUT
             </button>
         </div>

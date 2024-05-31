@@ -1,34 +1,35 @@
-import React,{useEffect,memo} from 'react'
+import React,{memo,useEffect} from 'react'
 import {useQuery, gql} from '@apollo/client'
 import { useSelector,useDispatch } from 'react-redux'
-import { setAllDeals,setFilteredDeals,setIsFiltered,setFilterCategory } from '../../store/myDeals/dealReducer'
+import { setAllSold,setFilteredSold,setIsFiltered,setFilterCategory } from '../../store/sold/soldReducer'
 import {setAllCategories } from '../../store/inventory/inventoryReducer'
-
 import Swal from 'sweetalert2'
 
-const DEALS_OF_DEALERSHIP=gql`
+
+const SOLD=gql`
     query {
-        dealsOfCertainDealership{
+        viewDealershipVehiclesSold{
             id
-            car_id{
-                
-                    name
-                    type
-                    model
-                    car_info{
-                        price
-                        milage
-                        description
-                    }
-                }
-                deal_info{
-                    discount
+            car_id {
+                id
+                type
+                name
+                model
+                car_info {
+                    price
+                    milage
                     description
                 }
+            }
+            vehicle_info {
+                sold_price
+                sold_date
+                description
+                }
+            
         }
     }
 `
-
 const GET_CATEGORIES=gql`
     query {
         getCategories
@@ -36,28 +37,28 @@ const GET_CATEGORIES=gql`
 `
 
 function Info() {
-    const deals=useSelector(state=>state.deal.allDeals)
-    const filterCategory=useSelector(state=>state.deal.filterCategory)
-    const filteredDeals=useSelector(state=>state.deal.filteredDeals)
     const allCategories=useSelector(state=>state.inventory.allCategories)
+    const allSold=useSelector(state=>state.sold.allSold)
+    const filteredSold=useSelector(state=>state.sold.filteredSold)
+    const filterCategory=useSelector(state=>state.sold.filterCategory)
+
 
     const dispatch=useDispatch()
-    const { data, loading, error } = useQuery(DEALS_OF_DEALERSHIP, {
-        onCompleted: (data) => {
-          dispatch(setAllDeals(data.dealsOfCertainDealership))
-          dispatch(setFilteredDeals(data.dealsOfCertainDealership))
+    const {data,loading,error}=useQuery(SOLD,{
+        onError:(error)=>{
+            console.log(error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops..',
+                text: "Error in fetching the data of deals"
+              })
         },
-        onError: (error) => {
-          console.log(error)
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops..',
-            text: "Error in fetching the data of deals"
-          })
+        onCompleted:(data)=>{
+            dispatch(setAllSold(data.viewDealershipVehiclesSold))
+            dispatch(setFilteredSold(data.viewDealershipVehiclesSold))
         }
-      })
-
-      const {data:catData,loading:catLoading,error:catError}=useQuery(GET_CATEGORIES,{
+    })
+    const {data:catData,loading:catLoading,error:catError}=useQuery(GET_CATEGORIES,{
         onError: (error) => {
             console.log(error)
             Swal.fire({
@@ -68,43 +69,35 @@ function Info() {
           }
       })
 
-      useEffect(()=>{
+
+
+    useEffect(()=>{
         if (catData && catData.getCategories) {
             dispatch(setAllCategories(catData.getCategories))
           }
       },[dispatch,catData])
 
-      useEffect(() => {
-        if (data) {
-          dispatch(setAllDeals(data.dealsOfCertainDealership))
-          dispatch(setFilteredDeals(data.dealsOfCertainDealership))
-        }
-      }, [data, dispatch])
-
-     
-   
       useEffect(()=>{
         if(filterCategory==="All Categories"){
             dispatch(setIsFiltered(false))
-            dispatch(setFilteredDeals(deals))
+            dispatch(setFilteredSold(allSold))
         }
         else{
 
             
-            dispatch(setFilteredDeals(deals.filter(elem=>elem.car_id.type===filterCategory)))
+            dispatch(setFilteredSold(allSold.filter(elem=>elem.car_id.type===filterCategory)))
             dispatch(setIsFiltered(true))}
         
 
       },[filterCategory,dispatch])
 
-  
   return (
     <div className='h-[100px] m-2 flex justify-between lg:justify-around items-center lg:text-xl '>
         <div className='flex flex-col justify-start gap-[5px] justify-items-start'>
             <div className='border-[2px] text-orange-400 border-orange-400 h-16 w-48 lg:w-64 flex justify-center items-center'>
                 <div className='p-4 font-semibold   flex justify-start items-end gap-[5px] '>
-                    <p>Deals Of Selected CateGory: </p>
-                    <p>{filteredDeals.length}</p>
+                    <p>Sold Vehicles Of CateGory: </p>
+                    <p>{filteredSold.length}</p>
                 </div>
             </div>
             <div className='lg:hidden'>
@@ -138,8 +131,8 @@ function Info() {
         
         <div className='border-[2px] text-orange-400 border-orange-400 h-16 w-48 lg:w-64 flex justify-center items-center'>
             <div className='p-4 font-semibold   flex justify-start items-end gap-[5px] '>
-                <p>Total Deals</p>
-                <p>{deals.length}</p>
+                <p>Total Sold Vehicles</p>
+                <p>{allSold.length}</p>
             </div>
         </div>
     </div>
