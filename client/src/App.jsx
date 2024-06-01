@@ -9,6 +9,7 @@ import Inventory from './pages/Inventory'
 import MyDeals from './pages/MyDeals'
 import Sold from './pages/Sold'
 import MyVehicle from './pages/MyVehicle'
+import DealsOnCar from './pages/DealsOnCar'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path='/myDeals' exact element={<MyDeals/>}/>
         <Route path='/sold' exact element={<Sold/>}/>
         <Route path='/myVehicle' exact element={<MyVehicle/>}/>
+        <Route path="/deal_on_car/:carID" element={<DealsOnCar />} />
       </Routes>
     </BrowserRouter>
   )

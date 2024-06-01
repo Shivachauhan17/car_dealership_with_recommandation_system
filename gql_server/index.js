@@ -74,6 +74,7 @@ const typeDefs=`
     }
 
     type Dealership{
+        id:ID!
         dealership_email:String!
         dealership_name:String!
         dealership_location:String!

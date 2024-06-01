@@ -8,6 +8,7 @@ import inventoryReducer from './store/inventory/inventoryReducer'
 import dealReducer from './store/myDeals/dealReducer'
 import soldReducer from './store/sold/soldReducer'
 import mine from './store/my_vehicle/myVehicleReducer'
+import dealOnCar from './store/deals_on_car/dealsReducer'
 import App from './App'
 import './index.css'
 
@@ -40,7 +41,8 @@ const store=configureStore({
     inventory:inventoryReducer,
     deal:dealReducer,
     sold:soldReducer,
-    mine:mine
+    mine:mine,
+    carDeals:dealOnCar
   }
 })
 
