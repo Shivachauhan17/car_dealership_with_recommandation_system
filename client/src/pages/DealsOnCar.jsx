@@ -15,12 +15,12 @@ function DealsOnCar() {
         <div>
             <div className='flex justify-center items-center gap-10 p-6'>
                 <h4 className={
-                    `text-lg font-bold hover:cursor-pointer ${isCarDeal?"border-b-4 border-orange-400 text-slate-600":""}`
+                    `text-lg font-bold hover:cursor-pointer  ${isCarDeal?"border-b-4 border-orange-400 text-slate-600":"border-b-4 border-white"}`
                     }
                     onClick={()=>{setIsCarDeal(true)}}
                     >Deals On Car</h4>
                 <h4 className={
-                    `text-lg font-bold hover:cursor-pointer ${!isCarDeal?"border-b-4 border-orange-400 text-slate-600":""}`
+                    `text-lg font-bold hover:cursor-pointer  ${!isCarDeal?"border-b-4 border-orange-400 text-slate-600":"border-b-4 border-white"}`
                     }
                     onClick={()=>{setIsCarDeal(false)}}
                     >Delership With Car</h4>

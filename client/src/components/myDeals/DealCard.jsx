@@ -14,6 +14,7 @@ const DELETE_DEAL_FROM_DEALERSHIP=gql`
         `
 
 function DealCard({item,deal,id}) {
+    const userType=localStorage.getItem('userType')
     const dispatch=useDispatch()
     const deals=useSelector(state=>state.deal.allDeals)
     const filteredDeals=useSelector(state=>state.deal.filteredDeals)
@@ -77,9 +78,11 @@ function DealCard({item,deal,id}) {
                         <p>{item.car_info.milage}</p>
                     </div>
                     <div className='font-semibold text-slate-500'><span className='font-bold '>Deal Description: </span ><p className='line-clamp-4 hover:line-clamp-none'>{deal.description}</p></div>
-                    <div className='flex justify-between justify-items-center'>
+                    {userType!=="user"
+                    ?<div className='flex justify-between justify-items-center'>
                         <MdDelete className='text-3xl mt-4 hover:cursor-pointer hover:text-slate-600' onClick={removeDealershipDeal}/>
                     </div>
+                    :null}
                     
                 </li>
   )

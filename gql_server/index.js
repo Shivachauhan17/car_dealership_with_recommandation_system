@@ -89,7 +89,9 @@ const typeDefs=`
         viewAllCars:[Car]!
         carsOfCertainDealership:[Car]!
         dealsOfCertainDealership:[Deal]!
+        dealsOfCertainDealershipByEmail(dealership_email:String!):[Deal]!
         dealershipWithCertainCar(carID:String!):[Dealership]!
+        carsOfCertainDealershipByEmail(dealership_email:String!):[Car]!
 
         vehicleOwnedByUser:[SoldVehicle]!
         viewAllDealsOnCertainCar(carID:String!):[Deal]!
@@ -152,6 +154,18 @@ const resolvers={
 
         },
 
+        carsOfCertainDealershipByEmail:async(root,args)=>{
+            const {dealership_email}=args
+
+            if(!dealership_email){
+                throw new GraphQLError("input parameters are not right")
+            }
+
+            const dealership=await Dealership.findOne({dealership_email:dealership_email}).populate('cars')
+            return dealership.cars
+
+        },
+
         dealsOfCertainDealership:async(root,args,context)=>{
             const dealershipEmail=context.username
             if(!dealershipEmail){
@@ -168,6 +182,24 @@ const resolvers={
             )
             return dealership.deals
         },
+        dealsOfCertainDealershipByEmail:async(root,args)=>{
+            const {dealership_email}=args
+            if(!dealership_email){
+                throw new GraphQLError("inpur parameters are not right")
+            }
+
+            const dealership=await Dealership.findOne({dealership_email:dealership_email}).populate(
+                {
+                    path:'deals',
+                    populate:{
+                        path:'car_id'
+                    }
+                }
+            )
+            return dealership.deals
+
+        }
+        ,
 
         dealershipWithCertainCar:async(root,args)=>{
             const {carID}=args

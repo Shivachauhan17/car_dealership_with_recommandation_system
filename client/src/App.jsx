@@ -10,6 +10,7 @@ import MyDeals from './pages/MyDeals'
 import Sold from './pages/Sold'
 import MyVehicle from './pages/MyVehicle'
 import DealsOnCar from './pages/DealsOnCar'
+import DealershipStats from './pages/DealershipStats'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path='/sold' exact element={<Sold/>}/>
         <Route path='/myVehicle' exact element={<MyVehicle/>}/>
         <Route path="/deal_on_car/:carID" element={<DealsOnCar />} />
+        <Route path="/dealership_stats/:dealership_email" element={<DealershipStats />} />
       </Routes>
     </BrowserRouter>
   )

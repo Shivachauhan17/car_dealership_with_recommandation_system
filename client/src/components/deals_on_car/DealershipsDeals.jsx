@@ -5,7 +5,7 @@ import {setDealerShips} from '../../store/deals_on_car/dealsReducer'
 import Swal from 'sweetalert2'
 import { MdEmail } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
-
+import {Link} from 'react-router-dom'
 
 
 function DealershipsDeals({id,isCarDeal}) {
@@ -48,7 +48,7 @@ function DealershipsDeals({id,isCarDeal}) {
             {
                 dealerShips.map((item,index)=>{
                     return <li className='hover:cursor-pointer transition duration-500 ease-in-out border-[1px] border-slate-200 my-4 p-10 hover:shadow-md rounded-lg hover:bg-orange-300 lg:w-[500px]'>
-                        <p className='font-bold text-xl'>{item.dealership_name}</p>
+                        <Link to={`/dealership_stats/${item.dealership_email}`}><p className='font-bold text-xl hover:underline'>{item.dealership_name}</p></Link>
                         <div className='flex justify-start gap-[8px]'>
                             <MdEmail className='text-xl'/>
                             <p className='font-semibold text-slate-500'>{item.dealership_email}</p>

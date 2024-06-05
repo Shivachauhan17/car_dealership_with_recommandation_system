@@ -9,6 +9,8 @@ import dealReducer from './store/myDeals/dealReducer'
 import soldReducer from './store/sold/soldReducer'
 import mine from './store/my_vehicle/myVehicleReducer'
 import dealOnCar from './store/deals_on_car/dealsReducer'
+import inventory_by_email from './store/dealership_stats/inventory_by_email/inventoryReducer'
+import dealsByEmailReducer from './store/dealership_stats/deals_by_email/dealsByEmailReducer'
 import App from './App'
 import './index.css'
 
@@ -42,7 +44,9 @@ const store=configureStore({
     deal:dealReducer,
     sold:soldReducer,
     mine:mine,
-    carDeals:dealOnCar
+    carDeals:dealOnCar,
+    inventoryByEmail:inventory_by_email,
+    dealsByEmail:dealsByEmailReducer
   }
 })
 
