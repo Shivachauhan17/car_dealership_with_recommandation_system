@@ -20,7 +20,7 @@ function CommonNav() {
             {userType === "user" && (
                 <div 
                 onClick={()=>{navigate('/myVehicle')}}
-                className='font-semibold w-32 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
+                className='font-semibold w-36 p-3 hover:text-white hover:bg-orange-400 transition-colors duration-2000 ease-in-out flex justify-center items-center tracking-wider text-xl'>
                     <p>My Vehicles</p>
                 </div>
             )}
