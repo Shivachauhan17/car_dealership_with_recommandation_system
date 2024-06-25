@@ -10,7 +10,7 @@ function MobileCommonNav({ showSidebar }) {
             <div 
             onClick={()=>{navigate('/home')}}
             className='hover:cursor-pointer font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>Home</p></div>
-            {userType === "user" && <div className='font-semibold w-full hover:text-white hover:bg-orange-400 flex justify-center items-center'><p className='h-fit p-[9px]'>Dealer-Ships</p></div>}
+            {/* {userType === "user" && <div className='font-semibold w-full hover:text-white hover:bg-orange-400 flex justify-center items-center'><p className='h-fit p-[9px]'>Dealer-Ships</p></div>} */}
             {userType === "user" && <div 
             onClick={()=>{navigate('/myVehicle')}}
             className='font-semibold hover:bg-orange-400 hover:text-white w-full flex justify-center items-center'><p className='h-fit p-[9px]'>My Vehicles</p></div>}

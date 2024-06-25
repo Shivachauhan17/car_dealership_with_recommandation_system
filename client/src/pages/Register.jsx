@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import LoginSignupNav from '../components/loginSignupPage/LoginSignupNav'
 import RegisterForm from '../components/register/Register'
 import { useNavigate } from 'react-router-dom'

@@ -369,7 +369,6 @@ const resolvers={
                         id: user.id,
                     } 
                     const token=await jwt.sign(userForToken,JWT_SECRET)
-                    console.log(token)
                     return {msg:"user successfully verified logging you in",token:token,error:null,type:"user"}
                 }
 
@@ -539,7 +538,6 @@ startStandaloneServer(server,{
           const decodedToken = jwt.verify(
             auth.substring(7), JWT_SECRET
           )
-        
           return decodedToken
         }
       },
