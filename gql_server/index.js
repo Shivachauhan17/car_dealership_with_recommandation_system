@@ -18,6 +18,7 @@ const Dealership=require('./models/dealership')
 const User=require('./models/user')
 const SoldVehicle=require('./models/sold_vehicle')
 const Deal=require('./models/deal')
+const Rating=require('./models/rating')
 
 const { register } = require('module')
 
@@ -97,6 +98,7 @@ const typeDefs=`
         viewAllDealsOnCertainCar(carID:String!):[Deal]!
         viewDealershipVehiclesSold:[SoldVehicle]!
         getCategories:[String]!
+        getRating(carID:String!):Int!
     }
 
     type LoginResponse{
@@ -113,6 +115,7 @@ const typeDefs=`
         addCarToDealership(carID:String!):String!
         addDealToDealership(carID:String!,discount:Int!,description:String!):String!
         deleteDealFromDealership(dealID:String!):String!
+        rateACar(rating:Int!,carName:String!,carID:String!):String!
     }
 
     
@@ -266,8 +269,26 @@ const resolvers={
                 }
             })
             return dealership.sold_vehicles
-        }
+        },
+        getRating:async(root,args,context)=>{
+            const email=context.username
+            const {carID}=args
+            if(!carID){
+                throw new GraphQLError("inpur parameters are not right")
+            }
 
+            try{
+                const rating=await Rating.findOne({email:email,car:new mongoose.Types.ObjectId(carID)})
+                if(!rating){
+                    return 0
+                }
+                return rating.rating
+            }
+            catch(e){
+                console.log(e)
+                throw new GraphQLError("some error occured while fetching the rating data")
+            }
+        }
     },
 
     Mutation:{
@@ -521,7 +542,39 @@ const resolvers={
             }
         },
 
+        rateACar:async (root,args,context)=>{
+            const email=context.username
+            console.log("email:",email)
+            const {rating,carName,carID}=args
+            if(!rating || !carName || !carID){
+                throw new GraphQLError("inpur parameters are not right")
+            }
+            try{
+                const ratingFind=await Rating.findOne({email:email, car:new mongoose.Types.ObjectId(carID)})
+                if(ratingFind){
+                    await Rating.findOneAndUpdate({email:email, car:new mongoose.Types.ObjectId(carID)},{$set:{
+                        rating:rating
+                    }})
+                }
+                else{
 
+                    const ratingObj=new Rating({
+                        email:email,
+                        rating:rating,
+                        carName:carName,
+                        car:new mongoose.Types.ObjectId(carID)
+                    })
+
+                    await ratingObj.save()
+                }
+                return "successfully rated the car"
+            }
+            catch(e){
+                console.log(e)
+                throw new GraphQLError("some error occured while storing the rating")
+            }
+        },
+        
     }
 }
 

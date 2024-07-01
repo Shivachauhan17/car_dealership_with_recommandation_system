@@ -307,4 +307,22 @@ describe("testing all dealership mutations",()=>{
         expect(typeof result.data.deleteDealFromDealership).toBe("string")
     })
 
+    test("rating a car",async()=>{
+        const RATE_A_CAR=gql`
+            mutation RateACar($rating:Int!,$carName:String!,$carID:String!){
+                rateACar(rating:$rating,carName:$carName,carID:$carID)
+            }
+        `
+
+        const variables={
+            rating:10,
+            carName:"Toyota RAV4",
+            carID:"664d0311efb164fc4f277eca"
+        }
+
+        const result=await mutate({mutation:RATE_A_CAR,variables})
+        console.log(result)
+        expect(typeof result.data.rateACar).toBe("string")
+    })
+
 })

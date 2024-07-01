@@ -5,6 +5,7 @@ import AddToInventoryBtn from './AddToInventoryBtn';
 import CreateDealBtn from './CreateDealBtn';
 import { useSelector } from 'react-redux';
 import {Link} from 'react-router-dom'
+import Rating from './Rating';
 
 function CarCard({item}) {
     const onHome=useSelector(state=>state.home.onHome)
@@ -35,6 +36,10 @@ function CarCard({item}) {
                     ?<div>
                         <div className='mt-4'><Link className='rounded-md bg-sky-400 hover:bg-sky-300 p-[5px] px-[10px] mt-2 font-semibold text-white' to={`/deal_on_car/${item.id}`} >Deals On Car</Link></div>
                     </div>
+                    :null
+                    }
+                    {userType==="user"
+                    ?<Rating carID={item.id}/>
                     :null
                     }
                 </li>
