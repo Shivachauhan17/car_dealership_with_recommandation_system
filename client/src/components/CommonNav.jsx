@@ -1,7 +1,11 @@
 import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApolloClient } from '@apollo/client';
+
 
 function CommonNav() {
+    const client = useApolloClient();
+
   const navigate=useNavigate()
     const userType = localStorage.getItem('userType');
 
@@ -46,8 +50,10 @@ function CommonNav() {
                 </div>
             )}
             <button className='text-white tracking-wider font-semibold text-xl bg-sky-400 hover:bg-sky-300 transition-colors duration-2000 ease-in-out rounded-md p-[10px]'
-            onClick={()=>{localStorage.removeItem("token");
-                            navigate('/')
+            onClick={()=>{
+                client.clearStore();
+                localStorage.removeItem("token");
+                            navigate('/');
             }}
             >
                 LOGOUT

@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { FaRegStar } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
-import { gql,useQuery } from '@apollo/client';
+import { gql,useQuery,useMutation } from '@apollo/client';
 import { MdModeEdit } from "react-icons/md";
 
 import Swal from 'sweetalert2';
@@ -12,17 +12,57 @@ const GET_RATING=gql`
     }
 `
 
-function Rating({carID}) {
+const RATE_A_CAR=gql`
+    mutation RateACar($rating:Int!,$carName:String!,$carID:String!){
+        rateACar(rating:$rating,carName:$carName,carID:$carID)
+    }
+`
+
+function Rating({carID,carName}) {
+    const [originalRating,setOriginalRating]=useState(0)
     const [rating,setRating]=useState(0)
     const [edit,setEdit]=useState(false)
     const variables={
         carID:carID
     }
+
+    const mutationVariables={
+        carID:carID,
+        rating:rating,
+        carName:carName
+    }
+
+    const [rate]=useMutation(RATE_A_CAR,{
+        variables:mutationVariables,
+        onError:(error)=>{
+            Swal.fire({
+                icon:'error',
+                title:'Oops..',
+                text:"error occured while rating the car"
+              })
+        },
+        onCompleted:(data)=>{
+            const result=data.rateACar
+            if(result.error){
+                Swal.fire({
+                    icon:'error',
+                    title:'Oops..',
+                    text:result.error
+                  })
+            }else{
+                Swal.fire({
+                    icon:'success',
+                    title:'Success!',
+                    text:result
+                  })
+            }
+        }
+    })
     const { loading, error, data }=useQuery(GET_RATING,{
         variables:variables,
         onCompleted:(data)=>{
-            console.log(data)
             setRating(data.getRating)
+            setOriginalRating(data.getRating)
         }
     })
 
@@ -37,8 +77,9 @@ function Rating({carID}) {
                 <FaRegStar />
             </div>
             <div className='px-2 text-2xl font-bold flex justify-start items-center gap-1'>
-                <MdModeEdit  size={24} onClick={()=>{setEdit(!edit)}}/>
-                {
+            <div className='font-bold text-2xl'>
+                    <MdModeEdit  onClick={()=>{setEdit(!edit);setRating(originalRating)}}/>
+                </div>                {
                     edit?
                     <select
                         className='h-8 font-normal text-lg bg-transparent border-[1px] border-gray-500 rounded-md outline-none'
@@ -52,7 +93,10 @@ function Rating({carID}) {
                                 }
                 {
                     edit?
-                    <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white text-lg font-normal  p-[4px] py-[2px] rounded">
+                    <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-1 rounded text-lg font-normal"
+                    onClick={()=>{rate();
+                    setEdit(false)}}
+                    >
                     Submit
                     </button>
                     :null
@@ -71,8 +115,9 @@ function Rating({carID}) {
                     <FaStar />
                 </div>
                 <div className='px-2 font-bold flex justify-start items-center gap-1'>
-                    <MdModeEdit onClick={()=>{setEdit(!edit)}}/>
-                    {
+                <div className='font-bold text-2xl'>
+                    <MdModeEdit  onClick={()=>{setEdit(!edit);setRating(originalRating)}}/>
+                </div>                    {
                     edit?
                     <select
                         className='h-8 font-normal text-lg bg-transparent border-[1px] border-gray-500 rounded-md outline-none'
@@ -86,7 +131,10 @@ function Rating({carID}) {
                                 }
                                 {
                     edit?
-                    <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-2 rounded">
+                    <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-1 rounded text-lg font-normal"
+                    onClick={()=>{rate();
+                        setEdit(false)}}
+                    >
                     Submit
                     </button>
                     :null
@@ -118,7 +166,9 @@ function Rating({carID}) {
                 <FaRegStar/>
             </div>
             <div className='px-2 font-bold flex justify-start items-center gap-1'>
-                <MdModeEdit onClick={()=>{setEdit(!edit)}}/>
+                <div className='font-bold text-2xl'>
+                    <MdModeEdit  onClick={()=>{setEdit(!edit);setRating(originalRating)}}/>
+                </div>
                 {
                     edit?
                     <select
@@ -133,7 +183,10 @@ function Rating({carID}) {
                                 }
                                 {
                     edit?
-                    <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-2 rounded">
+                    <button type="submit" className="w-full bg-sky-400 hover:bg-sky-300 text-white p-1 rounded text-lg font-normal"
+                    onClick={()=>{rate();
+                        setEdit(false)}}
+                    >
                     Submit
                     </button>
                     :null

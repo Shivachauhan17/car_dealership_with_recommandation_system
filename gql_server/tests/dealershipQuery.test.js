@@ -7,13 +7,12 @@ const jwt=require('jsonwebtoken')
 const {JWT_SECRET}=require('../config/config')
 
 
-const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNoaXZhbmJkMjAxOUBnbWFpbC5jb20iLCJ0eXBlIjoiZGVhbGVyc2hpcCIsImlkIjoiNjY0Mzk5YTNlOTFlMjhmNTI4YmRiZDVkIiwiaWF0IjoxNzE2NzQ5ODU1fQ.U0eceoh9c3CLlXto7SllkZY_MWLuXvgvvTPBfjl3Qx4"
-
+const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkaXRpQGdtYWlsLmNvbSIsInR5cGUiOiJ1c2VyIiwiaWQiOiI2NjdiNGE0ZmE4NDdkOTRlNzFmNTY2ZjciLCJpYXQiOjE3MTk4NDMzNTh9.wKhukKRTV7deFRHDJLn7CQ5wYPn-az8g8Nn8JV2GpK4"
 const server=new ApolloServer({
     typeDefs,
     resolvers,
     context: () => {
-        const auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNoaXZhbmJkMjAxOUBnbWFpbC5jb20iLCJ0eXBlIjoiZGVhbGVyc2hpcCIsImlkIjoiNjY0Mzk5YTNlOTFlMjhmNTI4YmRiZDVkIiwiaWF0IjoxNzE2NzQ5ODU1fQ.U0eceoh9c3CLlXto7SllkZY_MWLuXvgvvTPBfjl3Qx4"
+        const auth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkaXRpQGdtYWlsLmNvbSIsInR5cGUiOiJ1c2VyIiwiaWQiOiI2NjdiNGE0ZmE4NDdkOTRlNzFmNTY2ZjciLCJpYXQiOjE3MTk4NDMzNTh9.wKhukKRTV7deFRHDJLn7CQ5wYPn-az8g8Nn8JV2GpK4"
         if (auth ) {
           const decodedToken = jwt.verify(
             auth, JWT_SECRET
@@ -323,6 +322,20 @@ describe("testing all dealership mutations",()=>{
         const result=await mutate({mutation:RATE_A_CAR,variables})
         console.log(result)
         expect(typeof result.data.rateACar).toBe("string")
+    })
+
+    test("get Rated Cars",async()=>{
+        const GET_RATINGS=gql`
+            query {
+                recommandedCars{
+                    name
+                }
+            }
+        `
+
+        const result=await query({query:GET_RATINGS})
+        console.log(result)
+        expect(typeof result.data.recommandedCars[0].name).toBe("string")
     })
 
 })

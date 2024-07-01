@@ -39,7 +39,7 @@ function CarCard({item}) {
                     :null
                     }
                     {userType==="user"
-                    ?<Rating carID={item.id}/>
+                    ?<Rating carID={item.id} carName={item.name}/>
                     :null
                     }
                 </li>

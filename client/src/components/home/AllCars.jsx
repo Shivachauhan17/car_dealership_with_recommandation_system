@@ -25,7 +25,9 @@ const GET_ALL_CARS=gql`
 
 function AllCars() {
     const dispatch=useDispatch()
-    const { loading, error, data } = useQuery(GET_ALL_CARS)    
+    const { loading, error, data } = useQuery(GET_ALL_CARS,{
+        fetchPolicy: 'network-only'
+    })    
 
     if(error){
         Swal.fire({

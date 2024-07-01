@@ -93,6 +93,7 @@ const typeDefs=`
         dealsOfCertainDealershipByEmail(dealership_email:String!):[Deal]!
         dealershipWithCertainCar(carID:String!):[Dealership]!
         carsOfCertainDealershipByEmail(dealership_email:String!):[Car]!
+        recommandedCars:[Car]!
 
         vehicleOwnedByUser:[SoldVehicle]!
         viewAllDealsOnCertainCar(carID:String!):[Deal]!
@@ -225,6 +226,7 @@ const resolvers={
 
         vehicleOwnedByUser:async(root,args,context)=>{
             const userEmail=context.username
+            console.log("userEmail:",userEmail)
             if(!userEmail){
                 throw new GraphQLError("inpur parameters are not right")
             }
@@ -287,6 +289,19 @@ const resolvers={
             catch(e){
                 console.log(e)
                 throw new GraphQLError("some error occured while fetching the rating data")
+            }
+        },
+        recommandedCars:async(root,args,context)=>{
+            const email=context.username
+            try{
+                const result=await User.findOne({user_email:email}).populate('recommand')
+                if(result)
+                    return result.recommand
+                return []
+            }
+            catch(e){
+                console.log(e)
+                throw new GraphQLError("some error occured while fetching the data of recommended cars")
             }
         }
     },

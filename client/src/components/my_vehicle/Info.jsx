@@ -41,6 +41,7 @@ function Info() {
 
     const dispatch=useDispatch()
     const { data, loading, error } = useQuery(OWNED_BY_USER, {
+         fetchPolicy: 'network-only',
         onCompleted: (data) => {
           dispatch(setallMine(data.vehicleOwnedByUser))
           dispatch(setFilteredMine(data.vehicleOwnedByUser))

@@ -23,6 +23,11 @@ const userSchema=mongoose.Schema({
     vehicle_info:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'SoldVehicle'
+    }],
+    recommand:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Car",
+        default:[]
     }]
 })
 

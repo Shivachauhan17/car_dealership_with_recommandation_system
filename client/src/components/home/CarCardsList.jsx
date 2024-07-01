@@ -19,8 +19,8 @@ function CarCardsList() {
 
    const pagination=useCallback((newPage)=>{
       
-      const startIndex=(page-1)*limit
-      const endIndex=(page-1)*limit+10>cars.length?cars.length:(page-1)*limit+10
+      const startIndex=(page)*limit
+      const endIndex=(page)*limit+10>cars.length?cars.length:(page)*limit+10
       const items=cars.slice(startIndex,endIndex)
       
       const newItems=[...carsOnPage, ...items];
@@ -59,7 +59,8 @@ function CarCardsList() {
 
   return (
    <div>
-    <ul  className='flex flex-col justify-start lg:flex lg:flex-row lg:flex-wrap lg:justify-around'>
+   <h3 className='font-bold text-xl'>All Cars</h3>
+    <ul  className='flex flex-col justify-start lg:flex lg:flex-row lg:flex-wrap lg:justify-around '>
             {isFiltered
                ?filteredCars.map((item,index)=>(
                   <CarCard key={index} item={item} />
